@@ -1,0 +1,122 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    navigatingTo="navigatingTo"
+    loaded="onLoaded"
+    unloaded="onUnloaded"
+    backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,auto,auto,auto,auto,auto,auto">
+
+    <!-- Row 0: round back sticker + Not now -->
+    <GridLayout
+        row="0"
+        columns="auto,*,auto"
+        marginLeft="27" marginRight="27" marginTop="50">
+      <GridLayout col="0" id="backBtn" width="48" height="48" tap="onBack" touch="onStickerTouch">
+        <GridLayout
+            id="backBtnShadow"
+            class="si-back-shadow"
+            width="44" height="44"
+            marginLeft="4" marginTop="4" />
+        <GridLayout col="0" id="backBtnCard" class="si-back-ring" width="44" height="44">
+          <Image src="res://ic_chevron" width="17" height="17" stretch="aspectFit" />
+        </GridLayout>
+      </GridLayout>
+      <Label
+          col="2"
+          class="si-title"
+          text="Not now"
+          tap="onNotNow"
+          touch="onLinkTouch"
+          verticalAlignment="center"
+          horizontalAlignment="right" />
+    </GridLayout>
+
+    <!-- Row 1: headline -->
+    <Label
+        row="1"
+        class="ls-headline"
+        text="Enter the 6-&#10;digit code"
+        textWrap="true"
+        marginTop="14" marginLeft="27" marginRight="20" />
+
+    <!-- Row 2: sent-by SMS line -->
+    <Label
+        row="2"
+        id="smsLine"
+        class="si-sub"
+        text="Sent by SMS to +91 98300 ••• 21."
+        textWrap="true"
+        marginTop="10" marginLeft="27" marginRight="34" />
+
+    <!-- Row 3: six code boxes; native EditTexts won't paint ink chrome on
+         this core — sticker chrome lives on wrapper Grids (wb0..wb5), the
+         fields themselves stay transparent. Mock geometry: 46x64 boxes,
+         6 dp GAPS in the columns (46 + 5x52 = the 306 band exactly, so the
+         margin lives outside each box and all six render 46 wide), 13
+         corners, Inter-Black digits via .otp-digit -->
+    <GridLayout
+        row="3"
+        id="codeRow"
+        columns="46,52,52,52,52,52"
+        marginTop="22" marginLeft="27">
+      <GridLayout col="0" id="wb0" class="wb" width="46" height="64">
+        <TextField id="ot0" width="46" height="64" class="otp-digit" style="text-align:center;padding:0" background="transparent" border-width="0" border-radius="0" text="" keyboardType="number" maxLength="2" textChange="onDigit" focus="onFocus" verticalAlignment="middle" />
+      </GridLayout>
+      <GridLayout col="1" id="wb1" class="wb" width="46" height="64" marginLeft="6">
+        <TextField id="ot1" width="46" height="64" class="otp-digit" style="text-align:center;padding:0" background="transparent" border-width="0" border-radius="0" text="" keyboardType="number" maxLength="2" textChange="onDigit" focus="onFocus" verticalAlignment="middle" />
+      </GridLayout>
+      <GridLayout col="2" id="wb2" class="wb" width="46" height="64" marginLeft="6">
+        <TextField id="ot2" width="46" height="64" class="otp-digit" style="text-align:center;padding:0" background="transparent" border-width="0" border-radius="0" text="" keyboardType="number" maxLength="2" textChange="onDigit" focus="onFocus" verticalAlignment="middle" />
+      </GridLayout>
+      <GridLayout col="3" id="wb3" class="wb" width="46" height="64" marginLeft="6">
+        <TextField id="ot3" width="46" height="64" class="otp-digit" style="text-align:center;padding:0" background="transparent" border-width="0" border-radius="0" text="" keyboardType="number" maxLength="2" textChange="onDigit" focus="onFocus" verticalAlignment="middle" />
+      </GridLayout>
+      <GridLayout col="4" id="wb4" class="wb" width="46" height="64" marginLeft="6">
+        <TextField id="ot4" width="46" height="64" class="otp-digit" style="text-align:center;padding:0" background="transparent" border-width="0" border-radius="0" text="" keyboardType="number" maxLength="2" textChange="onDigit" focus="onFocus" verticalAlignment="middle" />
+      </GridLayout>
+      <GridLayout col="5" id="wb5" class="wb" width="46" height="64" marginLeft="6">
+        <TextField id="ot5" width="46" height="64" class="otp-digit" style="text-align:center;padding:0" background="transparent" border-width="0" border-radius="0" text="" keyboardType="number" maxLength="2" textChange="onDigit" focus="onFocus" returnKeyType="done" verticalAlignment="middle" />
+      </GridLayout>
+    </GridLayout>
+
+    <!-- Row 4: resend countdown / resend link -->
+    <GridLayout row="4" marginTop="16" marginLeft="27">
+      <StackLayout id="resendRow" orientation="horizontal" horizontalAlignment="left" verticalAlignment="center">
+        <Label class="otp-count" text="Resend in " verticalAlignment="center" />
+        <Label id="resendTimer" class="otp-count-num" text="0:24" marginLeft="3" verticalAlignment="center" />
+      </StackLayout>
+      <Label
+          id="resendBtn"
+          class="otp-resend"
+          text="Resend code"
+          tap="onResend"
+          touch="onLinkTouch"
+          visibility="collapse"
+          horizontalAlignment="left" verticalAlignment="center" />
+    </GridLayout>
+
+    <!-- Row 5: Verify sticker -->
+    <GridLayout
+        row="5"
+        id="verifyBtn"
+        height="51" marginTop="18" marginLeft="27" marginRight="27"
+        tap="onVerify" touch="onStickerTouch">
+      <GridLayout id="verifyBtnShadow" class="ls-btn-shadow" height="47" marginLeft="4" marginTop="4" />
+      <GridLayout id="verifyBtnCard" class="ls-btn-primary" height="47" marginRight="4">
+        <Label class="ls-btn-text-primary" text="Verify &amp; continue" horizontalAlignment="center" verticalAlignment="center" />
+      </GridLayout>
+    </GridLayout>
+
+    <!-- Row 6: terms -->
+    <Label row="6" class="si-terms" textWrap="true" marginTop="18" marginLeft="27" marginRight="24">
+      <FormattedString>
+        <Span text="You can browse every offer without an account. By continuing you agree to our " />
+        <Span text="Terms" underline="true" />
+        <Span text=" and " />
+        <Span text="Privacy Policy" underline="true" />
+        <Span text="." />
+      </FormattedString>
+    </Label>
+  </GridLayout>
+</Page>

@@ -1,0 +1,86 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    navigatingTo="navigatingTo"
+    loaded="onLoaded"
+    backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,auto,auto,auto,*,auto">
+
+    <!-- Row 0: round back sticker + title (this page may be left freely;
+         nothing saves until the confirm dialog) -->
+    <GridLayout
+        row="0"
+        marginTop="46" marginLeft="27" marginRight="27"
+        columns="auto,auto">
+      <GridLayout col="0" id="backBtn" width="48" height="48" tap="onBack" touch="onStickerTouch">
+        <GridLayout
+            id="backBtnShadow"
+            class="si-back-shadow"
+            width="44" height="44"
+            marginLeft="4" marginTop="4" />
+        <GridLayout col="0" id="backBtnCard" class="si-back-ring" width="44" height="44">
+          <Image src="res://ic_chevron" width="17" height="17" stretch="aspectFit" />
+        </GridLayout>
+      </GridLayout>
+      <Label
+          col="1"
+          class="ep-title"
+          text="Search locality"
+          marginLeft="14"
+          verticalAlignment="center" />
+    </GridLayout>
+
+    <!-- Row 1: sub caption -->
+    <Label
+        row="1"
+        class="si-sub"
+        text="Type your area, locality or PIN code — offers come from whatever you confirm here."
+        textWrap="true"
+        marginTop="12" marginLeft="27" marginRight="34" />
+
+    <!-- Row 2: search field — sticker wrapper, native field stays transparent -->
+    <GridLayout row="2" class="si-field" height="48" marginTop="18" marginLeft="27" marginRight="27">
+      <TextField
+          id="qField"
+          class="si-phone"
+          background="transparent"
+          border-width="0"
+          border-radius="0"
+          color="#1C1B19"
+          style="padding-left: 16; padding-right: 16; padding-top: 0; padding-bottom: 0"
+          hint="e.g. Gariahat or 700019"
+          maxLength="80"
+          textChange="onQuery" returnPress="onQueryPress" />
+    </GridLayout>
+
+    <!-- Row 3: inline note — neutral gray while searching, red on errors -->
+    <Label
+        row="3"
+        id="qNote"
+        class="si-sub"
+        text=""
+        textWrap="true"
+        marginTop="12" marginLeft="27" marginRight="27" />
+
+    <!-- Row 4: results (sticker rows built by TS) -->
+    <ScrollView row="4" marginTop="4" marginBottom="14">
+      <StackLayout id="resList" marginTop="4" marginLeft="27" marginRight="27" />
+    </ScrollView>
+
+    <!-- shared NZ dialog (same confirm card, before anything saves) -->
+    <GridLayout row="0" rowSpan="6" id="nzDlgLayer" visibility="collapse">
+      <GridLayout id="nzDlgScrim" class="bs-scrim" opacity="0" tap="onDlgScrimTap" />
+      <GridLayout
+          id="nzDlgBox"
+          verticalAlignment="top" horizontalAlignment="stretch"
+          marginTop="168" marginLeft="27" marginRight="27">
+        <GridLayout
+            id="nzDlgShadow"
+            class="dlg-shadow"
+            horizontalAlignment="stretch"
+            marginTop="4" marginRight="4" />
+        <GridLayout id="nzDlgCard" class="dlg-card" horizontalAlignment="stretch" />
+      </GridLayout>
+    </GridLayout>
+  </GridLayout>
+</Page>

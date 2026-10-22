@@ -1,0 +1,57 @@
+// Every build type (ns run debug, prepare/sync assembles, --release) is
+// signed with the project's release keystore. Credentials live in the
+// gitignored keystore/keystore.properties; until that file exists the build
+// falls back to the default debug key so nothing breaks mid-development.
+
+import java.util.Properties
+
+def signingPropsFile = file("${rootProject.projectDir}/../../keystore/keystore.properties")
+def signingProps = new Properties()
+if (signingPropsFile.exists()) {
+    signingPropsFile.withInputStream { signingProps.load(it) }
+}
+
+// You can add your native dependencies here
+dependencies {
+    implementation 'com.google.android.gms:play-services-auth:21.0.0'
+//  implementation 'androidx.multidex:multidex:2.0.1'
+}
+
+android {
+  compileSdkVersion 36
+  buildToolsVersion "36"
+  // ndkVersion ""
+
+  defaultConfig {
+    minSdkVersion 24
+    targetSdkVersion 36
+
+    // Version Information
+    versionCode 1
+    versionName "1.0.0"
+
+    generatedDensities = []
+  }
+
+  signingConfigs {
+    nearzoop {
+      storeFile file("${rootProject.projectDir}/../../keystore/nearzoop-release.jks")
+      storePassword signingProps.storePassword ?: ''
+      keyAlias signingProps.keyAlias ?: ''
+      keyPassword signingProps.keyPassword ?: ''
+    }
+  }
+
+  buildTypes {
+    debug {
+      signingConfig signingPropsFile.exists() ? signingConfigs.nearzoop : signingConfigs.debug
+    }
+    release {
+      signingConfig signingConfigs.nearzoop
+    }
+  }
+
+  aaptOptions {
+    additionalParameters "--no-version-vectors"
+  }
+}

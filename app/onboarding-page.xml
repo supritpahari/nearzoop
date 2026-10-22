@@ -1,0 +1,142 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    navigatingTo="navigatingTo"
+    backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,*,auto" swipe="onSwipe">
+
+    <!-- Header: mini logo tile + wordmark + Skip -->
+    <GridLayout
+        row="0"
+        columns="auto,*,auto"
+        marginLeft="25" marginRight="25" marginTop="64">
+      <Image
+          col="0"
+          src="res://logo"
+          width="30"
+          stretch="aspectFit"
+          verticalAlignment="center" />
+      <Label
+          col="1"
+          class="ob-wordmark"
+          text="NearZoop"
+          marginLeft="12"
+          verticalAlignment="center"
+          horizontalAlignment="left" />
+      <Label
+          col="2"
+          class="ob-skip"
+          text="Skip"
+          tap="onSkip"
+          touch="onLinkTouch"
+          verticalAlignment="center"
+          horizontalAlignment="right" />
+    </GridLayout>
+
+    <!-- Viewpager: 3 scenes stacked in one cell, per-scene translateX -->
+    <GridLayout row="1" id="carousel" layoutChanged="onCarouselLayout">
+
+      <!-- Scene 1: Deals on your Locality -->
+      <StackLayout id="scene0">
+        <Image
+            src="res://ob_art_deals"
+            width="100%"
+            stretch="aspectFit"
+            horizontalAlignment="left"
+            marginTop="34" />
+        <Label
+            class="ob-headline"
+            text="Deals on&#10;your Locality."
+            textWrap="true"
+            marginTop="15" marginLeft="25"
+            horizontalAlignment="left" />
+        <Label
+            class="ob-body"
+            text="Restaurants, salons, gyms and more — live offers from shops around you, updated all day."
+            textWrap="true"
+            marginTop="12" marginLeft="25" marginRight="40"
+            horizontalAlignment="left" />
+      </StackLayout>
+
+      <!-- Scene 2: Closer means better -->
+      <StackLayout id="scene1">
+        <Image
+            src="res://ob_art_closer"
+            width="100%"
+            stretch="aspectFit"
+            horizontalAlignment="left"
+            marginTop="34" />
+        <Label
+            class="ob-headline"
+            text="Closer means&#10;better."
+            textWrap="true"
+            marginTop="15" marginLeft="25"
+            horizontalAlignment="left" />
+        <Label
+            class="ob-body"
+            text="Every offer is tagged to the shop's exact spot — so what you see is just a short walk away."
+            textWrap="true"
+            marginTop="12" marginLeft="25" marginRight="40"
+            horizontalAlignment="left" />
+      </StackLayout>
+
+      <!-- Scene 3: Walk in. Show. Save. -->
+      <StackLayout id="scene2">
+        <Image
+            src="res://ob_art_walk"
+            width="100%"
+            stretch="aspectFit"
+            horizontalAlignment="left"
+            marginTop="34" />
+        <Label
+            class="ob-headline"
+            text="Walk in.&#10;Show. Save."
+            textWrap="true"
+            marginTop="15" marginLeft="25"
+            horizontalAlignment="left" />
+        <Label
+            class="ob-body"
+            text="No vouchers, no codes, no fine print. Just flash the screen at the counter and pay less."
+            textWrap="true"
+            marginTop="12" marginLeft="25" marginRight="40"
+            horizontalAlignment="left" />
+      </StackLayout>
+    </GridLayout>
+
+    <!-- Footer: dots + sticker CTA -->
+    <GridLayout
+        row="2"
+        id="footerGrid"
+        columns="*,auto"
+        marginLeft="25" marginRight="25" marginBottom="34"
+        height="62">
+
+      <StackLayout col="0" orientation="horizontal" verticalAlignment="center">
+        <StackLayout id="dot0" class="ob-dot-active" width="26" height="10" marginRight="10" verticalAlignment="center" />
+        <StackLayout id="dot1" class="ob-dot" width="9" height="9" marginRight="10" verticalAlignment="center" />
+        <StackLayout id="dot2" class="ob-dot" width="9" height="9" verticalAlignment="center" />
+      </StackLayout>
+
+      <!-- Sticker button + hard offset shadow beneath it -->
+      <GridLayout col="1" id="ctaWrap" width="104" height="62" tap="onCta" touch="onCtaTouch">
+        <StackLayout
+            id="ctaShadow"
+            class="ob-cta-shadow"
+            width="100" height="58"
+            marginLeft="4" marginTop="4"
+            horizontalAlignment="left" verticalAlignment="top" />
+        <GridLayout
+            id="ctaBtn"
+            class="ob-cta"
+            width="100" height="58"
+            horizontalAlignment="left" verticalAlignment="top">
+          <Label
+              id="ctaLabel"
+              class="ob-cta-label"
+              text="Next"
+              horizontalAlignment="center" verticalAlignment="center" />
+        </GridLayout>
+      </GridLayout>
+    </GridLayout>
+  </GridLayout>
+</Page>

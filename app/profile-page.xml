@@ -1,0 +1,116 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    navigatingTo="navigatingTo"
+    loaded="onLoaded"
+    unloaded="onUnloaded"
+    backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,auto,auto,auto,auto,auto,auto,auto,*,auto">
+
+    <!-- Row 0: headline. There is NO back affordance on the gate: no sticker,
+         hardware back cancelled below — Save is the only exit. -->
+    <Label
+        row="0"
+        id="epTitle"
+        class="ep-title"
+        text="Create profile"
+        marginTop="46" marginLeft="27" />
+
+    <!-- Row 1: NAME cap (tracking via literal text — see .ep-cap-soft note) -->
+    <Label row="1" class="ep-cap" text="N A M E" marginTop="30" marginLeft="27" />
+
+    <!-- Row 2: name field -->
+    <GridLayout row="2" class="ep-field" height="52" marginTop="10" marginLeft="27" marginRight="27">
+      <TextField
+          id="epName"
+          class="ep-input"
+          style="padding-left: 16; padding-right: 16; padding-top: 0; padding-bottom: 0"
+          background="transparent" border-width="0" border-radius="0"
+          hint="Your name" height="100%"
+          textChange="onFieldChange" />
+    </GridLayout>
+
+    <!-- Row 3: MOBILE cap -->
+    <Label row="3" class="ep-cap" text="M O B I L E" marginTop="18" marginLeft="27" />
+
+    <!-- Row 4: mobile field — +91 rides inside the box like the mock; the
+         Verified chip shows only on the phone-auth path (it is verifiably
+         theirs); the google path starts empty, editable, no chip -->
+    <GridLayout row="4" class="ep-field" height="52" marginTop="10" marginLeft="27" marginRight="27"
+                columns="auto,*,auto">
+      <StackLayout col="0" orientation="horizontal" verticalAlignment="center">
+        <Label class="ep-input" text="+91" marginLeft="16" verticalAlignment="center" />
+        <TextField
+            id="epPhone"
+            class="ep-input"
+            style="padding-left: 8; padding-right: 4; padding-top: 0; padding-bottom: 0"
+            background="transparent" border-width="0" border-radius="0"
+            hint="10-digit number" keyboardType="number" maxLength="16"
+            editable="false"
+            width="150" height="100%"
+            textChange="onFieldChange" />
+      </StackLayout>
+      <Label
+          col="2"
+          id="epVerified"
+          class="ep-verified"
+          text="Verified"
+          marginRight="12"
+          visibility="collapse"
+          verticalAlignment="center" />
+    </GridLayout>
+
+    <!-- Row 5: EMAIL cap + untracked (OPTIONAL) suffix so it can never
+         truncate mid-word like the tracked version did -->
+    <StackLayout row="5" orientation="horizontal" marginTop="18" marginLeft="27">
+      <Label class="ep-cap" text="E M A I L" verticalAlignment="center" />
+      <Label class="ep-cap-soft" text="(OPTIONAL)" verticalAlignment="center" />
+    </StackLayout>
+
+    <!-- Row 6: email field -->
+    <GridLayout row="6" class="ep-field" height="52" marginTop="10" marginLeft="27" marginRight="27">
+      <TextField
+          id="epEmail"
+          class="ep-input"
+          style="padding-left: 16; padding-right: 16; padding-top: 0; padding-bottom: 0"
+          background="transparent" border-width="0" border-radius="0"
+          hint="For receipts from support" height="100%"
+          keyboardType="email"
+          textChange="onFieldChange" />
+    </GridLayout>
+
+    <!-- Row 7: privacy one-liner -->
+    <Label
+        row="7"
+        class="ep-note"
+        textWrap="true"
+        marginTop="14" marginLeft="27" marginRight="34"
+        text="We only ask for what's needed to sync saved offers and verify coupons. No birthday, gender or address." />
+
+    <!-- Row 8: flexible spacer (fields hug the top like the mock) -->
+
+    <!-- Row 9: Save sticker, pinned low -->
+    <GridLayout
+        row="9"
+        id="saveBtn"
+        height="51" marginBottom="26" marginLeft="27" marginRight="27"
+        tap="onSave" touch="onStickerTouch">
+      <GridLayout id="saveBtnShadow" class="ls-btn-shadow" height="47" marginLeft="4" marginTop="4" />
+      <GridLayout id="saveBtnCard" class="ls-btn-primary" height="47" marginRight="4">
+        <Label class="ls-btn-text-primary" text="Save changes" horizontalAlignment="center" verticalAlignment="center" />
+      </GridLayout>
+    </GridLayout>
+
+    <!-- hidden inline error line for save validation -->
+    <GridLayout row="8">
+      <Label
+          row="0"
+          id="epError"
+          class="si-err"
+          textWrap="true"
+          text=""
+          visibility="collapse"
+          horizontalAlignment="left" verticalAlignment="bottom" />
+    </GridLayout>
+  </GridLayout>
+</Page>

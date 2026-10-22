@@ -1,0 +1,160 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      actionBarHidden="true"
+      backgroundColor="#F4ECDF"
+      navigatingTo="navigatingTo"
+      loaded="onLoaded">
+
+  <GridLayout rows="*, auto">
+
+    <!-- ============================ map bay ============================ -->
+    <GridLayout id="mapBand" row="0">
+
+      <!-- real streets: MapLibre page loaded from map-src.ts by TS; bubbles +
+           dashed ring + blue dot live inside the WebView, overlays stay native -->
+      <WebView id="mapWeb" />
+
+      <!-- top action stickers -->
+      <GridLayout columns="auto, auto, *, auto" marginLeft="16" marginRight="16"
+                  marginTop="13" verticalAlignment="top" zIndex="5">
+        <GridLayout id="locSticker" col="0" columns="auto, auto"
+                    tap="onStickerTap" touch="onStickerTouch">
+          <StackLayout id="locStickerShadow" class="ho-topbar-shadow" />
+          <GridLayout id="locStickerCard" class="ho-topbar" columns="auto, auto, auto"
+                      padding="9 13 9 11">
+            <Image col="0" src="res://ic_locate_red" width="19" height="19"
+                   verticalAlignment="center" stretch="aspectFit" />
+            <StackLayout col="1" marginLeft="9">
+              <Label text="YOUR LOCATION" class="ho-cap" marginTop="1" />
+              <Label id="locLine" text="Gariahat · 2 km" class="ho-topbar-line" />
+            </StackLayout>
+            <Image col="2" src="res://ic_chev_dn" width="13" height="13" marginLeft="9"
+                   verticalAlignment="center" stretch="aspectFit" />
+          </GridLayout>
+        </GridLayout>
+
+        <GridLayout id="btnSearch" col="1" marginLeft="9" width="42" height="42"
+                    tap="onSearchTap" touch="onStickerTouch">
+          <StackLayout id="btnSearchShadow" class="ho-topbar-shadow" />
+          <GridLayout id="btnSearchCard" class="ho-topbar">
+            <Image src="res://ic_search_ink" width="19" height="19"
+                   horizontalAlignment="center" verticalAlignment="center"
+                   stretch="aspectFit" />
+          </GridLayout>
+        </GridLayout>
+
+        <GridLayout id="btnBell" col="3" width="42" height="42"
+                    tap="onBellTap" touch="onStickerTouch">
+          <StackLayout id="btnBellShadow" class="ho-topbar-shadow" />
+          <GridLayout id="btnBellCard" class="ho-topbar">
+            <Image src="res://ic_bell_ink" width="18" height="18"
+                   horizontalAlignment="center" verticalAlignment="center"
+                   stretch="aspectFit" />
+          </GridLayout>
+          <Label id="bellBadge" text="3" class="ho-badge" width="20" height="20"
+                 horizontalAlignment="right" verticalAlignment="top" />
+        </GridLayout>
+      </GridLayout>
+
+      <!-- round map controls (right edge of the map, pinned by TS) -->
+      <GridLayout id="btnLocate" width="46" height="46" marginRight="18"
+                  verticalAlignment="top" zIndex="5"
+                  tap="onLocateTap" touch="onStickerTouch">
+        <GridLayout id="btnLocateCard" class="ho-round">
+          <Image src="res://ic_locate_red" width="21" height="21"
+                 horizontalAlignment="center" verticalAlignment="center"
+                 stretch="aspectFit" />
+        </GridLayout>
+      </GridLayout>
+      <GridLayout id="btnLayers" width="40" height="40" marginRight="20"
+                  verticalAlignment="top" zIndex="5"
+                  tap="onLayersTap" touch="onStickerTouch">
+        <GridLayout id="btnLayersCard" class="ho-round-sm">
+          <Image src="res://ic_map_ink" width="18" height="18"
+                 horizontalAlignment="center" verticalAlignment="center"
+                 stretch="aspectFit" />
+        </GridLayout>
+      </GridLayout>
+
+      <!-- offers sheet -->
+      <GridLayout id="sheet" rows="auto, auto, *" class="ho-sheet"
+                  verticalAlignment="bottom" horizontalAlignment="stretch"
+                  zIndex="10">
+        <StackLayout class="ho-handle" horizontalAlignment="center" marginTop="10" />
+
+        <GridLayout row="1" columns="*, auto" marginLeft="22" marginTop="10"
+                    marginRight="16">
+          <StackLayout col="0">
+            <Label id="offerCount" text="8 offers nearby" class="ho-h1" />
+            <Label id="offerMeta" text="Within 2 km · updated just now" class="ho-sub"
+                   marginTop="2" />
+          </StackLayout>
+          <GridLayout id="btnAll" col="1" verticalAlignment="top"
+                      tap="onAllTap" touch="onStickerTouch">
+            <StackLayout id="btnAllShadow" class="ho-topbar-shadow" />
+            <GridLayout id="btnAllCard" class="ho-allpill" columns="auto, auto">
+              <Image col="0" src="res://ic_list_ink" width="15" height="15"
+                     verticalAlignment="center" stretch="aspectFit" />
+              <Label col="1" text="All" class="ho-textAll" marginLeft="7" />
+            </GridLayout>
+          </GridLayout>
+        </GridLayout>
+
+        <ScrollView row="2" id="cardScroll" marginTop="13">
+          <StackLayout id="cardStack" />
+        </ScrollView>
+      </GridLayout>
+    </GridLayout>
+
+    <!-- =========================== bottom nav =========================== -->
+    <GridLayout row="1" columns="1, 1, 1, 1" backgroundColor="#FFFFFF" height="76"
+                id="navBar">
+      <StackLayout col="0" id="tab0" tap="onTabTap" touch="onLinkTouch"
+                   horizontalAlignment="center" verticalAlignment="center">
+        <GridLayout id="tabPill0" width="46" height="27"
+                    horizontalAlignment="center" verticalAlignment="top">
+          <Image id="tabIco0" src="res://ic_pin_amb" width="20" height="20"
+                 horizontalAlignment="center" verticalAlignment="center"
+                 stretch="aspectFit" />
+        </GridLayout>
+        <Label id="tabLbl0" text="Nearby" class="ho-tab-on" marginTop="3"
+               horizontalAlignment="center" />
+      </StackLayout>
+
+      <StackLayout col="1" id="tab1" tap="onTabTap" touch="onLinkTouch"
+                   horizontalAlignment="center" verticalAlignment="center">
+        <GridLayout id="tabPill1" width="46" height="27"
+                    horizontalAlignment="center" verticalAlignment="top">
+          <Image id="tabIco1" src="res://ic_grid_gy" width="20" height="20"
+                 horizontalAlignment="center" verticalAlignment="center"
+                 stretch="aspectFit" />
+        </GridLayout>
+        <Label id="tabLbl1" text="Explore" class="ho-tab-off" marginTop="3"
+               horizontalAlignment="center" />
+      </StackLayout>
+
+      <StackLayout col="2" id="tab2" tap="onTabTap" touch="onLinkTouch"
+                   horizontalAlignment="center" verticalAlignment="center">
+        <GridLayout id="tabPill2" width="46" height="27"
+                    horizontalAlignment="center" verticalAlignment="top">
+          <Image id="tabIco2" src="res://ic_bkm_gy" width="20" height="20"
+                 horizontalAlignment="center" verticalAlignment="center"
+                 stretch="aspectFit" />
+        </GridLayout>
+        <Label id="tabLbl2" text="Saved" class="ho-tab-off" marginTop="3"
+               horizontalAlignment="center" />
+      </StackLayout>
+
+      <StackLayout col="3" id="tab3" tap="onTabTap" touch="onLinkTouch"
+                   horizontalAlignment="center" verticalAlignment="center">
+        <GridLayout id="tabPill3" width="46" height="27"
+                    horizontalAlignment="center" verticalAlignment="top">
+          <Image id="tabIco3" src="res://ic_you_gy" width="20" height="20"
+                 horizontalAlignment="center" verticalAlignment="center"
+                 stretch="aspectFit" />
+        </GridLayout>
+        <Label id="tabLbl3" text="You" class="ho-tab-off" marginTop="3"
+               horizontalAlignment="center" />
+      </StackLayout>
+    </GridLayout>
+  </GridLayout>
+</Page>

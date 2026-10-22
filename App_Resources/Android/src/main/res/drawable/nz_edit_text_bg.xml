@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Flat, fully transparent EditText background. Replaces AppCompat's
+     abc_edit_text_material (which paints the pale-blue focused underline
+     using colorControlActivated / ns_accent). The field chrome belongs to
+     the JS wrappers; native fields stay silent at the theme level. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#00000000" />
+</shape>

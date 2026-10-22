@@ -1,0 +1,126 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    navigatingTo="navigatingTo"
+    backgroundColor="#F4ECDF">
+  <GridLayout rows="*,auto,auto,auto">
+
+    <!-- real streets: MapLibre page loaded from map-src.ts by TS (ring, dot and
+         offer bubbles live inside the WebView; the slider only feeds radius) -->
+    <GridLayout id="mapBand">
+      <WebView id="mapWeb" />
+
+      <!-- low accuracy fix banner -->
+      <GridLayout
+          id="fixBanner"
+          columns="auto,*,auto"
+          horizontalAlignment="stretch" verticalAlignment="bottom"
+          marginLeft="26" marginRight="26" marginBottom="17"
+          height="56"
+          class="ls-banner">
+        <Image
+            col="0"
+            src="res://ic_locate_ink"
+            width="20" height="20"
+            stretch="aspectFit"
+            marginLeft="12" verticalAlignment="center" />
+        <Label
+            id="fixText"
+            col="1"
+            class="ls-banner-text"
+            text="Couldn't get an accurate fix (±800 m). Try again or pick a locality."
+            textWrap="true"
+            paddingLeft="8" verticalAlignment="center" />
+        <Label
+            col="2"
+            class="ls-retry"
+            text="Retry."
+            tap="onRetry"
+            touch="onLinkTouch"
+            paddingRight="12" verticalAlignment="center" />
+      </GridLayout>
+    </GridLayout>
+
+    <StackLayout row="1" class="ls-divider" height="2" />
+
+    <!-- form -->
+    <StackLayout row="2" id="formHost" marginLeft="28" marginRight="28">
+      <Label class="ls-step" text="STEP 1 OF 1" marginTop="20" />
+      <Label
+          class="ls-headline"
+          text="Where should we&#10;look for offers?"
+          textWrap="true"
+          marginTop="14" />
+      <Label
+          class="ls-body"
+          text="We use your location only while the app is open. Never in the background."
+          textWrap="true"
+          marginTop="10" />
+
+      <!-- search radius heading + live value -->
+      <GridLayout columns="auto,*,auto" marginTop="28">
+        <Label col="0" class="ls-label" text="Search radius" verticalAlignment="bottom" />
+        <Label col="2" class="ls-value" id="kmLabel" text="2 km" horizontalAlignment="right" verticalAlignment="bottom" />
+      </GridLayout>
+
+      <!-- custom sticker slider -->
+      <GridLayout
+          id="slider"
+          rows="44"
+          pan="onPan"
+          touch="onSliderTouch"
+          tap="onSliderTap"
+          layoutChanged="onSliderLayout"
+          marginTop="12">
+        <StackLayout row="0" class="ls-track" height="6" verticalAlignment="center" />
+        <StackLayout row="0" id="fill" class="ls-fill" height="6" verticalAlignment="center" horizontalAlignment="left" />
+        <StackLayout row="0" id="thumbShadow" class="ls-thumb-shadow" width="30" height="30" verticalAlignment="center" horizontalAlignment="left" />
+        <StackLayout row="0" id="thumb" class="ls-thumb" width="30" height="30" verticalAlignment="center" horizontalAlignment="left" />
+      </GridLayout>
+
+      <!-- min/max -->
+      <GridLayout columns="auto,*,auto" marginTop="8">
+        <Label col="0" class="ls-units" text="0.5 KM" />
+        <Label col="2" class="ls-units" text="10 KM" horizontalAlignment="right" />
+      </GridLayout>
+    </StackLayout>
+
+    <!-- sticker CTAs pinned to bottom -->
+    <StackLayout row="3" id="ctasHost" marginLeft="32" marginRight="28" marginBottom="32">
+      <GridLayout id="useBtn" tap="onUseLocation" touch="onStickerTouch" height="62" marginBottom="14">
+        <GridLayout id="useBtnShadow" class="ls-btn-shadow" height="58" marginTop="4" marginRight="4" />
+        <GridLayout id="useBtnCard" class="ls-btn-primary" height="58" marginLeft="4">
+          <StackLayout orientation="horizontal" horizontalAlignment="center" verticalAlignment="center">
+            <Image src="res://ic_locate_on" width="26" height="26" stretch="aspectFit" verticalAlignment="center" />
+            <Label class="ls-btn-text-primary" text="Use my current location" marginLeft="12" verticalAlignment="center" />
+          </StackLayout>
+        </GridLayout>
+      </GridLayout>
+      <GridLayout id="pickBtn" tap="onPickLocality" touch="onStickerTouch" height="62">
+        <GridLayout id="pickBtnShadow" class="ls-btn-shadow" height="58" marginTop="4" marginRight="4" />
+        <GridLayout id="pickBtnCard" class="ls-btn-sec" height="58" marginLeft="4">
+          <StackLayout orientation="horizontal" horizontalAlignment="center" verticalAlignment="center">
+            <Image src="res://ic_search_ink" width="24" height="24" stretch="aspectFit" verticalAlignment="center" />
+            <Label class="ls-btn-text-secondary" text="Choose a locality manually" marginLeft="12" verticalAlignment="center" />
+          </StackLayout>
+        </GridLayout>
+      </GridLayout>
+    </StackLayout>
+
+    <!-- shared NZ dialog (nz-dialog.ts builds the card content per open) -->
+    <GridLayout row="0" rowSpan="4" id="nzDlgLayer" visibility="collapse">
+      <GridLayout id="nzDlgScrim" class="bs-scrim" opacity="0" tap="onDlgScrimTap" />
+      <GridLayout
+          id="nzDlgBox"
+          verticalAlignment="top" horizontalAlignment="stretch"
+          marginTop="168" marginLeft="27" marginRight="27">
+        <GridLayout
+            id="nzDlgShadow"
+            class="dlg-shadow"
+            horizontalAlignment="stretch"
+            marginTop="4" marginRight="4" />
+        <GridLayout id="nzDlgCard" class="dlg-card" horizontalAlignment="stretch" />
+      </GridLayout>
+    </GridLayout>
+  </GridLayout>
+</Page>

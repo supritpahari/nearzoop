@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-zoop: #fb4b32;
+  --color-cream: #f4ecdf;
+  --color-sun: #ffc93b;
+  --color-ink: #1c1b19;
+  --color-paper: #fcfaf7;
+  --color-shell: #0e0e0d;
+}
+
+@theme inline {
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-plex-mono);
+}
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-zoop);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+  overscroll-behavior: none;
+}
+
+::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+@keyframes zoop-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.zoop-spinner {
+  transform-origin: 50% 50%;
+  animation: zoop-spin 1.15s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zoop-spinner {
+    animation: none;
+  }
+}

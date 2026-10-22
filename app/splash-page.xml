@@ -1,0 +1,54 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    backgroundColor="#FB4B32">
+  <GridLayout
+      rows="30%,auto,auto,auto,*,auto"
+      loaded="onLoaded"
+      tap="onTap"
+      backgroundColor="#FB4B32">
+
+    <!-- Logo mark (black tile + golden offset print) -->
+    <Image
+        row="1"
+        src="res://logo"
+        width="107" height="111"
+        stretch="aspectFit"
+        horizontalAlignment="left" marginLeft="31.4" />
+
+    <!-- Near / Zoop -->
+    <Label
+        row="2"
+        class="splash-headline"
+        text="Near&#10;Zoop"
+        textWrap="true"
+        horizontalAlignment="left" marginLeft="25.5" marginTop="11.4" />
+
+    <!-- Tagline -->
+    <Label
+        row="3"
+        class="splash-subtitle"
+        text="Offers in your Locality, right now."
+        horizontalAlignment="left" marginLeft="25.5" marginTop="18" />
+
+    <!-- Restoring status strip -->
+    <GridLayout
+        row="5"
+        columns="auto,auto"
+        horizontalAlignment="left" marginLeft="25.5" marginBottom="25.2">
+      <Image
+          id="splash-spinner"
+          src="res://nzspinner"
+          width="30" height="30"
+          stretch="aspectFit"
+          verticalAlignment="center" />
+      <Label
+          col="1"
+          id="statusLabel"
+          class="splash-footer"
+          text="RESTORING GARIAHAT · 2 KM"
+          marginLeft="12.6"
+          verticalAlignment="center" />
+    </GridLayout>
+  </GridLayout>
+</Page>

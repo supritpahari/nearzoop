@@ -1,0 +1,642 @@
+
+Button.-primary {
+  font-size: 18;
+}
+
+/* NearZoop splash screen */
+.splash-headline {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 62;
+  line-height: 0.93;
+  /* tracking -3 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #FFFFFF;
+}
+
+.splash-subtitle {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 17.5;
+  line-height: 1.2;
+  /* tracking -0.3 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #FFFFFF;
+}
+
+.splash-footer {
+  font-family: 'IBMPlexMono-Medium', monospace;
+  font-size: 9.6;
+  /* tracking 1.4 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #FFFFFF;
+}
+
+/* NearZoop onboarding */
+.ob-wordmark {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 21;
+  /* tracking -0.5 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #1C1B19;
+}
+
+.ob-skip {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 18;
+  /* tracking -0.3 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #59544C;
+}
+
+.ob-headline {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 45;
+  line-height: 1.04;
+  /* tracking -1.6 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #1C1B19;
+}
+
+.ob-body {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 17.5;
+  line-height: 1.42;
+  /* tracking -0.2 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #6E675E;
+}
+
+.ob-dot {
+  background-color: #A9A49A;
+  border-radius: 4.5;
+}
+
+.ob-dot-active {
+  background-color: #1C1B19;
+  border-radius: 5;
+}
+
+.ob-cta {
+  background-color: #FB4B32;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 16;
+}
+
+.ob-cta-label {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 19;
+  color: #FFFFFF;
+}
+
+.ob-cta-shadow {
+  background-color: #1C1B19;
+  border-radius: 16;
+}
+
+/* NearZoop location setup */
+.ls-wordmark {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 20;
+  /* tracking -0.4 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #1C1B19;
+}
+
+.ls-banner {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 1.2;
+  border-radius: 14;
+}
+
+.ls-banner-text {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 14.5;
+  line-height: 1.28;
+  color: #4B453C;
+}
+
+.ls-retry {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 15;
+  color: #1C1B19;
+  text-decoration: underline;
+}
+
+.ls-divider {
+  background-color: #1C1B19;
+}
+
+.ls-step {
+  font-family: 'IBMPlexMono-Medium', monospace;
+  font-size: 11;
+  /* tracking 2.2 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #5A544B;
+}
+
+.ls-headline {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 34;
+  line-height: 1.08;
+  /* tracking -1.2 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #1C1B19;
+}
+
+.ls-body {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 15;
+  line-height: 1.42;
+  color: #6E675E;
+}
+
+.ls-label {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 19;
+  color: #1C1B19;
+}
+
+.ls-value {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 28;
+  color: #1C1B19;
+}
+
+.ls-units {
+  font-family: 'IBMPlexMono-Medium', monospace;
+  font-size: 11;
+  /* tracking 2 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #5A544B;
+}
+
+.ls-track {
+  background-color: #EBD2A9;
+  border-radius: 3;
+}
+
+.ls-fill {
+  background-color: #E4532C;
+  border-radius: 3;
+}
+
+.ls-thumb {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 15;
+}
+
+.ls-thumb-shadow {
+  background-color: #1C1B19;
+  border-radius: 15;
+}
+
+.ls-btn-primary {
+  background-color: #FB4B32;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 16;
+}
+
+.ls-btn-sec {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 16;
+}
+
+.ls-btn-shadow {
+  background-color: #1C1B19;
+  border-radius: 16;
+}
+
+.ls-btn-text-primary {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 20;
+  color: #FFFFFF;
+}
+
+.ls-btn-text-secondary {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 20;
+  color: #1C1B19;
+}
+
+/* location map overlay bubbles */
+.bub {
+  background-color: #FFFFFF;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 14;
+  padding: 5 5;
+}
+
+.bub-shadow {
+  background-color: #1C1B19;
+  border-radius: 14;
+}
+
+.bub-text {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  color: #1C1B19;
+}
+
+/* NearZoop sign in / sign up */
+.si-back-ring {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2.2;
+  border-radius: 22;
+}
+
+.si-back-shadow {
+  background-color: #1C1B19;
+  border-radius: 22;
+}
+
+.si-title {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 14;
+  /* tracking -0.2 dropped: Android LetterSpacingSpan mangles wrapped labels */
+  color: #1C1B19;
+}
+
+.si-sub {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 13.5;
+  line-height: 1.35;
+  color: #6E675E;
+}
+
+.si-field {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2.2;
+  border-radius: 12;
+}
+
+.si-cCode {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 15;
+  color: #1C1B19;
+}
+
+.si-phone {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 15.5;
+  color: #1C1B19;
+  padding: 0 14;
+}
+
+.si-or {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 13.5;
+  color: #6E675E;
+}
+
+.si-line {
+  background-color: #DFD4C2;
+}
+
+/* inline error line under the phone field (sign-in) */
+.si-err {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 12;
+  line-height: 1.3;
+  color: #D0342C;
+}
+
+/* partner join link — right-aligned under the number box (sign-in) */
+.si-biz {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 13.5;
+  color: #1C1B19;
+}
+
+.si-terms {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 13;
+  line-height: 1.45;
+  color: #6E675E;
+}
+
+/* six-digit code entry */
+/* Edit profile gate (post sign-in, unskippable for new accounts) */
+.ep-title {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 21.5;
+  color: #1C1B19;
+}
+
+.ep-cap {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 11.5;
+  color: #8E877E;
+}
+
+/* untracked suffix for the email cap — spacing via literal text, because
+ * this core mis-scales CSS letter-spacing (1.5dp rendered like 1.5em) */
+.ep-cap-soft {
+  font-family: 'Inter-SemiBold', 'Inter', sans-serif;
+  font-size: 10.5;
+  color: #B3A99B;
+  margin-left: 6;
+}
+
+.ep-field {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2.4;
+  border-radius: 17;
+}
+
+.ep-input {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 15.5;
+  color: #1C1B19;
+}
+
+.ep-verified {
+  background-color: #DDF3E1;
+  border-radius: 999;
+  padding: 5 11;
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 12.5;
+  color: #1B9E5A;
+}
+
+.ep-note {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 13.5;
+  line-height: 1.4;
+  color: #6E675E;
+}
+
+/* Sticker row text (shared by the locality search rows; ink badge styles
+ * live with .lp-row/.lp-pin later in this file) */
+.gp-avatar-letter {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 19;
+  color: #FFFDF6;
+}
+
+.gp-name {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 15;
+  color: #1C1B19;
+}
+
+.gp-mail {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 12.5;
+  color: #6E675E;
+}
+
+/* Overlay scrim — shared by every full-page overlay (nz-dialog confirm card) */
+.bs-scrim {
+  background-color: #0E0C0A;
+}
+
+/* NZ dialog — shared confirm card (see nz-dialog.ts); shadow offset rides
+ * on the wrapper's 4dp margins like every other sticker button */
+.dlg-shadow {
+  background-color: #1C1B19;
+  border-radius: 26;
+}
+
+.dlg-card {
+  background-color: #F7EFE0;
+  border-color: #1C1B19;
+  border-width: 2.6;
+  border-radius: 26;
+}
+
+.dlg-title {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 21;
+  color: #1C1B19;
+}
+
+.dlg-body {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 14.5;
+  line-height: 1.45;
+  color: #55504A;
+}
+
+/* Locality search rows (Nominatim results in the sticker language) */
+.lp-row {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2.2;
+  border-radius: 15;
+  padding: 10 14;
+}
+
+.lp-pin {
+  background-color: #1C1B19;
+  border-radius: 999;
+}
+
+/* OTP six-box digits — typeface lives here because the fields carry inline
+ * transparent/no-chrome attrs for this ROM; the sticker chrome (ink border,
+ * orange active ring, radius) is painted by the wrapper Grids (wb0..wb5) *//* OTP six-box chrome — class-driven because ALL chrome that paints on this
+ * core is CSS-driven (inline border-radius attrs on the markup never take
+ * effect); wrappers wb0..wb5 carry cream fill + ink border + 13 corners,
+ * .wb-active is the focus ring. Typefaces/targets: fields stay transparent. */
+.wb {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2.8;
+  border-radius: 13;
+}
+
+.wb-active {
+  border-color: #FB4B32;
+  border-width: 3;
+}
+
+.otp-digit {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 30;
+  color: #1C1B19;
+}
+
+.otp-count {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 13.5;
+  color: #6E675E;
+}
+
+.otp-count-num {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 13.5;
+  color: #1C1B19;
+}
+
+.otp-resend {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 13.5;
+  color: #1C1B19;
+  text-decoration: underline;
+}
+
+/* NearZoop home / Nearby */
+.ho-sheet {
+  background-color: #F4ECDF;
+  border-radius: 15 15 0 0;
+}
+
+.ho-handle {
+  background-color: #D8CEC0;
+  border-radius: 999;
+  width: 68;
+  height: 4.6;
+}
+
+.ho-h1 {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 22.5;
+  line-height: 1.1;
+  color: #1C1B19;
+}
+
+.ho-sub {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 13.5;
+  line-height: 1.3;
+  color: #6E675E;
+}
+
+.ho-topbar {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2.2;
+  border-radius: 12;
+}
+
+.ho-topbar-shadow {
+  background-color: #1C1B19;
+  border-radius: 12;
+}
+
+.ho-round {
+  background-color: #FFFFFF;
+  border-radius: 23;
+}
+
+.ho-round-sm {
+  background-color: #FFFFFF;
+  border-radius: 20;
+}
+
+.ho-cap {
+  font-family: 'IBMPlexMono-Medium', monospace;
+  font-size: 8.6;
+  color: #8E877E;
+}
+
+.ho-topbar-line {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 14.5;
+  color: #1C1B19;
+}
+
+.ho-badge {
+  background-color: #FB4B32;
+  border-radius: 999;
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 10.6;
+  color: #FFFFFF;
+  text-align: center;
+  padding: 0;
+}
+
+.ho-allpill {
+  background-color: #FFFFFF;
+  border-color: #1C1B19;
+  border-width: 2.2;
+  border-radius: 999;
+  padding: 6 14 6 12;
+}
+
+.ho-textAll {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 13.5;
+  color: #1C1B19;
+}
+
+.ho-card {
+  background-color: #FFFFFF;
+  border-color: #1C1B19;
+  border-width: 1.6;
+  border-radius: 16;
+}
+
+.ho-tile {
+  border-radius: 12;
+}
+
+.ho-tile-text {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  color: #FFFFFF;
+}
+
+.ho-tile-sub {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 8.6;
+  color: #FFFFFF;
+}
+
+.ho-card-title {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 15.5;
+  line-height: 1.22;
+  color: #1C1B19;
+}
+
+.ho-card-shop {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 12.5;
+  color: #8E877E;
+}
+
+.ho-chip {
+  background-color: #FBEAC1;
+  border-radius: 999;
+  padding: 4 9 4 7;
+}
+
+.ho-chip-text {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 11.5;
+  color: #1C1B19;
+}
+
+.ho-chip-end {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 11.5;
+  color: #B4690E;
+}
+
+.ho-empty-big {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 18.5;
+  color: #57534B;
+}
+
+.ho-tab-on {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 10.5;
+  color: #1C1B19;
+}
+
+.ho-tab-off {
+  font-family: 'Inter-Regular', 'Inter', sans-serif;
+  font-size: 10.5;
+  color: #9A9288;
+}
+
+
+
+
+
+/* @nativescript/theme removed: it forced border-width 0 0 1 (the fake blue
+   "underline" on focus via its #0088c9) plus margin/padding pollution on every
+   TextField. Fields stay chromeless; wrappers own all input chrome. */
+TextField, TextView {
+  background-color: transparent;
+  border-width: 0;
+  border-radius: 0;
+}

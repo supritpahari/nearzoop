@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "287400314808",
+    "project_id": "nearzoop",
+    "storage_bucket": "nearzoop.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:287400314808:android:ef7effc606ebbc41ad714d",
+        "android_client_info": {
+          "package_name": "com.nearzoop.india"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "287400314808-5h27rriros9p969e08d3os21rfc63nqf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nearzoop.india",
+            "certificate_hash": "f0515f6fe324e49c1032dc338573d3a0a86e6c37"
+          }
+        },
+        {
+          "client_id": "287400314808-lovt4is1tmbjt1nmg6o59557na8agnrq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDN6DP2gIEXib4rxRd5vyITvfIFsYOSZwg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "287400314808-lovt4is1tmbjt1nmg6o59557na8agnrq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

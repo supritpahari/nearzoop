@@ -1,0 +1,154 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    backgroundColor="#F4ECDF"
+    navigatingTo="onNavigatingTo"
+    loaded="onSignLoaded">
+  <GridLayout rows="auto,auto,auto,auto,auto,auto,auto,auto,auto,auto">
+
+    <!-- Row 0: round back sticker + Not now -->
+    <GridLayout
+        row="0"
+        columns="auto,*,auto"
+        marginLeft="27" marginRight="27" marginTop="50">
+      <GridLayout col="0" id="backBtn" width="48" height="48" tap="onBack" touch="onStickerTouch">
+        <GridLayout
+            id="backBtnShadow"
+            class="si-back-shadow"
+            width="44" height="44"
+            marginLeft="4" marginTop="4" />
+        <GridLayout col="0" id="backBtnCard" class="si-back-ring" width="44" height="44">
+          <Image src="res://ic_chevron" width="17" height="17" stretch="aspectFit" />
+        </GridLayout>
+      </GridLayout>
+      <Label
+          col="2"
+          class="si-title"
+          text="Not now"
+          tap="onNotNow"
+          touch="onLinkTouch"
+          verticalAlignment="center"
+          horizontalAlignment="right" />
+    </GridLayout>
+
+    <!-- Row 1: headline -->
+    <Label
+        row="1"
+        class="ls-headline"
+        text="Sign in to NearZoop"
+        textWrap="true"
+        marginTop="14" marginLeft="27" marginRight="20" />
+
+    <!-- Row 2: subtitle -->
+    <Label
+        row="2"
+        class="si-sub"
+        text="Sign In to claim coupons for shop owners to verify its you."
+        textWrap="true"
+        marginTop="10" marginLeft="27" marginRight="34" />
+
+    <!-- Row 3: phone row — country sticker + number field -->
+    <GridLayout
+        row="3"
+        columns="78,*"
+        marginTop="22" marginLeft="27" marginRight="27" height="48">
+      <GridLayout col="0" class="si-field" width="78">
+        <StackLayout orientation="horizontal" horizontalAlignment="center" verticalAlignment="center">
+          <Image src="res://ic_flag_in" width="20" height="14" stretch="aspectFit" verticalAlignment="center" />
+          <Label class="si-cCode" text="+91" marginLeft="7" verticalAlignment="center" />
+        </StackLayout>
+      </GridLayout>
+      <!-- phone field: the native EditText won't paint ink chrome on this
+           core, so the si-field sticker lives on the wrapper and the field
+           itself stays transparent -->
+      <GridLayout col="1" class="si-field" marginLeft="12">
+        <!-- field spans the wrapper exactly (per BRAD: match parent bounds,
+             zero radius) — the wrapper owns the ink chrome on this core -->
+        <TextField
+            id="phoneField"
+            class="si-phone"
+            background="transparent"
+            border-width="0"
+            border-radius="0"
+            color="#1C1B19"
+            style="padding-left: 14; padding-right: 14; padding-top: 0; padding-bottom: 0"
+            width="100%" height="100%"
+            hint=""
+            keyboardType="number"
+            maxLength="16" returnKeyType="next"
+            textChange="onPhoneChange"
+            returnPress="onSendOtp"
+            focus="onFocusDefuse" />
+      </GridLayout>
+    </GridLayout>
+
+    <!-- Row 4: partner join link — underlined, flush right under the number box -->
+    <Label
+        row="4"
+        class="si-biz"
+        text="Join as a Business"
+        textDecoration="underline"
+        tap="onBusinessTap"
+        touch="onLinkTouch"
+        horizontalAlignment="right"
+        marginTop="9" marginRight="27" />
+
+    <!-- Row 5: inline error line under the number field -->
+    <Label
+        row="5"
+        id="siError"
+        class="si-err"
+        textWrap="true"
+        text=""
+        visibility="collapse" />
+
+    <!-- Row 6: Send OTP sticker -->
+    <GridLayout
+        row="6"
+        id="sendBtn"
+        height="51" marginTop="14" marginLeft="27" marginRight="27"
+        tap="onSendOtp" touch="onStickerTouch">
+      <GridLayout id="sendBtnShadow" class="ls-btn-shadow" height="47" marginLeft="4" marginTop="4" />
+      <GridLayout id="sendBtnCard" class="ls-btn-primary" height="47" marginRight="4">
+        <Label class="ls-btn-text-primary" id="sendLbl" text="Send OTP" horizontalAlignment="center" verticalAlignment="center" />
+      </GridLayout>
+    </GridLayout>
+
+    <!-- Row 7: or divider -->
+    <GridLayout
+        row="7"
+        columns="*,auto,*"
+        height="16"
+        marginTop="18" marginLeft="27" marginRight="27">
+      <StackLayout col="0" class="si-line" height="1.2" verticalAlignment="center" />
+      <Label col="1" class="si-or" text="or" marginLeft="14" marginRight="14" verticalAlignment="center" />
+      <StackLayout col="2" class="si-line" height="1.2" verticalAlignment="center" />
+    </GridLayout>
+
+    <!-- Row 8: Continue with Google sticker -->
+    <GridLayout
+        row="8"
+        id="googleBtn"
+        height="51" marginTop="20" marginLeft="27" marginRight="27"
+        tap="onGoogle" touch="onStickerTouch">
+      <GridLayout id="googleBtnShadow" class="ls-btn-shadow" height="47" marginLeft="4" marginTop="4" />
+      <GridLayout id="googleBtnCard" class="ls-btn-sec" height="47" marginRight="4">
+        <StackLayout orientation="horizontal" horizontalAlignment="center" verticalAlignment="center">
+          <Image src="res://ic_google" width="22" height="22" stretch="aspectFit" verticalAlignment="center" />
+          <Label class="ls-btn-text-secondary" text="Continue with Google" marginLeft="12" verticalAlignment="center" />
+        </StackLayout>
+      </GridLayout>
+    </GridLayout>
+
+    <!-- Row 9: terms -->
+    <Label row="9" class="si-terms" textWrap="true" marginTop="20" marginLeft="27" marginRight="24">
+      <FormattedString>
+        <Span text="You can browse every offer without an account. By continuing you agree to our " />
+        <Span text="Terms" underline="true" />
+        <Span text=" and " />
+        <Span text="Privacy Policy" underline="true" />
+        <Span text="." />
+      </FormattedString>
+    </Label>
+  </GridLayout>
+</Page>

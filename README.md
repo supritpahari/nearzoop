@@ -1,6 +1,6 @@
-## Run the App
+# Run the App
 
-# To run the app, you need to follow these steps.
+## To run the app, you need to follow these steps.
 
 1. Turn On Developer Options in Your Android Device
 2. Turn On USB Debugging in Your Developer Settings.

@@ -1,0 +1,38 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      actionBarHidden="true"
+      navigatingTo="onNavigatingTo"
+      loaded="onLoaded"
+      backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,*">
+    <GridLayout row="0" columns="auto,*" marginTop="42" marginLeft="24" marginRight="24">
+      <GridLayout col="0" class="mvp-back" tap="onBack">
+        <Image src="res://ic_chevron" width="18" height="18" stretch="aspectFit" />
+      </GridLayout>
+      <Label col="1" class="mvp-heading" text="Offer details" marginLeft="14" verticalAlignment="center" />
+    </GridLayout>
+    <ScrollView row="1" marginTop="16">
+      <StackLayout marginLeft="24" marginRight="24" paddingBottom="28">
+        <GridLayout id="detailTile" class="mvp-detail-tile" marginTop="8">
+          <StackLayout verticalAlignment="middle">
+            <Label id="offerArtwork" class="mvp-detail-artwork" text="20%" />
+            <Label id="offerArtworkSub" class="mvp-detail-artwork-sub" text="OFF" />
+          </StackLayout>
+        </GridLayout>
+        <Label id="offerStatus" class="mvp-status" text="● Active · checked just now" marginTop="22" />
+        <Label id="offerTitle" class="mvp-detail-title" text="Offer title" textWrap="true" marginTop="14" />
+        <GridLayout id="shopLink" class="mvp-shop-link" rows="auto,auto" marginTop="18" tap="onShop">
+          <Label id="shopName" row="0" class="mvp-card-title" text="Local shop" />
+          <Label id="shopMeta" row="1" class="mvp-subheading" text="Around you · Open now" marginTop="4" />
+        </GridLayout>
+        <Label id="offerDescription" class="mvp-body" text="Offer details are available at the shop." textWrap="true" marginTop="20" />
+        <GridLayout class="mvp-info-panel" rows="auto,auto" marginTop="20">
+          <Label row="0" class="mvp-overline" text="HOW TO REDEEM" />
+          <Label row="1" class="mvp-body" text="Show this offer to the shop before it expires. Claim availability will be connected during backend integration." textWrap="true" marginTop="10" />
+        </GridLayout>
+        <GridLayout class="mvp-primary-button" marginTop="24" tap="onClaim">
+          <Label class="mvp-primary-button-text" text="Sign in to claim" horizontalAlignment="center" verticalAlignment="middle" />
+        </GridLayout>
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

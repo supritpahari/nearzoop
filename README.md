@@ -13,5 +13,25 @@ First build might take a lot of time.
 
 > If any problem appears with compiling, run ```ns clean``` and then ```ns run android```
 
+## App structure
+
+- `app/features/discovery/` contains local offer search and category screens.
+- `app/features/offers/` contains the offer domain type, shared offer-card
+  component, and all-offers, offer-detail, and shop screens.
+- `app/features/saved/` contains the saved-offers screen.
+- Existing startup, authentication, location, and nearby-map routes remain in
+  `app/` while the feature screens are migrated incrementally.
+- `app/firebase.ts`, `app/locate.ts`, and `app/map-src.ts` hold the existing
+  Firebase, device-location, and map integrations.
+
+The new discovery screens consume the current page's offer context, and the
+home screen falls back to local sample offers when Firestore is empty or
+unavailable. This keeps the customer flow previewable without creating or
+deleting Firestore documents. Search and category filtering operate on the
+loaded offer list on-device.
+
+The supplied screen references are in `Designing/app design/`. The current
+implementation pass covers the customer MVP path; alternate states and
+business/admin flows are intentionally left for later design passes.
 
 Make a branch and make a pull request for the project!

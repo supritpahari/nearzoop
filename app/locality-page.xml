@@ -66,21 +66,5 @@
     <ScrollView row="4" marginTop="4" marginBottom="14">
       <StackLayout id="resList" marginTop="4" marginLeft="27" marginRight="27" />
     </ScrollView>
-
-    <!-- shared NZ dialog (same confirm card, before anything saves) -->
-    <GridLayout row="0" rowSpan="6" id="nzDlgLayer" visibility="collapse">
-      <GridLayout id="nzDlgScrim" class="bs-scrim" opacity="0" tap="onDlgScrimTap" />
-      <GridLayout
-          id="nzDlgBox"
-          verticalAlignment="top" horizontalAlignment="stretch"
-          marginTop="168" marginLeft="27" marginRight="27">
-        <GridLayout
-            id="nzDlgShadow"
-            class="dlg-shadow"
-            horizontalAlignment="stretch"
-            marginTop="4" marginRight="4" />
-        <GridLayout id="nzDlgCard" class="dlg-card" horizontalAlignment="stretch" />
-      </GridLayout>
-    </GridLayout>
   </GridLayout>
 </Page>

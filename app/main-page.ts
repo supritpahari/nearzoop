@@ -33,7 +33,8 @@ import {
 import * as geolocation from '@nativescript/geolocation'
 import { encodeSpec, MapSpec, mountMap, pushSpec } from './map-src'
 import { onStickerTouch, onLinkTouch } from './press-feel'
-import { errText, firebaseAuth, firebaseDb, saveUserArea } from './firebase'
+import { errText, firebaseDb, saveUserArea } from './firebase'
+import { Offer } from './features/offers/domain/offer'
 
 export { onStickerTouch, onLinkTouch }
 
@@ -66,19 +67,6 @@ type Area = {
   setTimeMs: number
 }
 
-type Offer = {
-  id: string
-  lat: number
-  lng: number
-  text: string
-  fontSize: number
-  sub?: string
-  title?: string
-  shop?: string
-  color?: string
-  endsAtMs?: number
-}
-
 let pageRef: Page | null = null
 let bandW = 0
 let bandH = 0
@@ -88,7 +76,6 @@ let corpus: Offer[] = []   // every offer Firestore returned
 let offers: Offer[] = []   // filtered to the radius, distance-sorted
 let savedIds = new Set<string>()
 let loadedAt = 0
-let alignTried = false
 let chromeReady = false
 let chromeTries = 0
 let fixingBusy = false
@@ -101,7 +88,6 @@ export function navigatingTo(args: EventData) {
   pageRef = <Page>args.object // args.object IS the page here
   areaRef = readAreaLocal()
   savedIds = new Set(readSavedLocal())
-  alignTried = false
 }
 
 /* first chance to build chrome and kick the Firestore read; on some cores the
@@ -239,56 +225,14 @@ async function loadAligned() {
         })
       }
     })
-    const rich = docs.some((o) => !!o.title)
-    if (!rich && !alignTried && (await signedIn())) {
-      alignTried = true
-      await alignCorpus(db, snap)
-      return loadAligned() // read back what we wrote (guarded, no loop)
-    }
-    corpus = docs
+    corpus = docs.length ? docs : makeDemoOffers()
     loadedAt = Date.now()
     presentOffers()
   } catch (err) {
     console.log('[NZ][home] offers read blocked:', errText(err))
-  }
-}
-
-/* Legacy seed docs (the location page's six bare positions) get one reboot
- * into the home mock's eight rich offers — real Firestore rows the user can
- * edit from the console afterwards. Skipped once any document carries a
- * `title`: that marks the corpus as authored on purpose. */
-async function alignCorpus(db: unknown, snap: unknown) {
-  try {
-    const olds: Promise<unknown>[] = []
-    ;(<any>snap).forEach((d: any) => {
-      if (d.ref && d.ref.delete) {
-        olds.push(d.ref.delete())
-      }
-    })
-    if (olds.length) {
-      console.log('[NZ][home] aligning legacy seed -> rich offers')
-      await Promise.all(olds)
-    }
-    const c = areaRef || { lat: DEFAULT_CENTER.lat, lng: DEFAULT_CENTER.lng }
-    const slat = (c.lat * Math.PI) / 180
-    const now = Date.now()
-    const writes = MOCK_OFFERS.map((m) =>
-      (<any>db).collection('shops').add({
-        lat: c.lat - m.off[1] / DP_PER_KM / 111.32,
-        lng: c.lng + m.off[0] / DP_PER_KM / (111.32 * Math.cos(slat)),
-        text: m.text,
-        fontSize: m.fontSize,
-        sub: m.sub || '',
-        title: m.title,
-        shop: m.shop,
-        color: m.color,
-        endsAtMs: endsAtFor(m.ends, now),
-      })
-    )
-    await Promise.all(writes)
-    console.log('[NZ][home] wrote', MOCK_OFFERS.length, 'offers to shops')
-  } catch (err) {
-    console.log('[NZ][home] align blocked:', errText(err))
+    corpus = makeDemoOffers()
+    loadedAt = Date.now()
+    presentOffers()
   }
 }
 
@@ -357,13 +301,22 @@ function endsAtFor(spec: [number, number, number], nowMs: number): number {
   return d.getTime()
 }
 
-async function signedIn(): Promise<boolean> {
-  try {
-    const auth = await firebaseAuth()
-    return !!(auth && auth.currentUser)
-  } catch {
-    return false
-  }
+function makeDemoOffers(): Offer[] {
+  const area = areaRef || DEFAULT_CENTER
+  const latRad = (area.lat * Math.PI) / 180
+  const now = Date.now()
+  return MOCK_OFFERS.map((mock, index) => ({
+    id: `preview-${index + 1}`,
+    lat: area.lat - mock.off[1] / DP_PER_KM / 111.32,
+    lng: area.lng + mock.off[0] / DP_PER_KM / (111.32 * Math.cos(latRad)),
+    text: mock.text,
+    fontSize: mock.fontSize,
+    sub: mock.sub,
+    title: mock.title,
+    shop: mock.shop,
+    color: mock.color,
+    endsAtMs: endsAtFor(mock.ends, now),
+  }))
 }
 
 /* ---------------------------- present on screen ---------------------------- */
@@ -378,7 +331,7 @@ function presentOffers() {
     .map((o) => ({ o: o, d: distanceKm(c.lat, c.lng, o.lat, o.lng) }))
     .filter((x) => x.d <= km + 0.001)
     .sort((a, b) => a.d - b.d)
-    .map((x) => x.o)
+    .map((x) => ({ ...x.o, distanceLabel: fmtDist(x.d) }))
 
   const count = <Label>pageRef.getViewById('offerCount')
   const meta = <Label>pageRef.getViewById('offerMeta')
@@ -890,7 +843,13 @@ export function onStickerTap(args: EventData) {
 
 export function onSearchTap(args: EventData) {
   sink('btnSearchCard')
-  console.log('[NZ][home] search (stub)')
+  const page = (<View>args.object).page
+  if (page) {
+    page.frame.navigate({
+      moduleName: 'features/discovery/screens/search-page',
+      context: { offers: offers, savedIds: Array.from(savedIds) },
+    })
+  }
 }
 
 export function onBellTap(args: EventData) {
@@ -901,7 +860,13 @@ export function onBellTap(args: EventData) {
 
 export function onAllTap(args: EventData) {
   sink('btnAllCard')
-  console.log('[NZ][home] filter All (stub)')
+  const page = (<View>args.object).page
+  if (page) {
+    page.frame.navigate({
+      moduleName: 'features/offers/screens/all-offers-page',
+      context: { offers: offers, savedIds: Array.from(savedIds) },
+    })
+  }
 }
 
 export function onLayersTap(args: EventData) {
@@ -915,15 +880,33 @@ export function onCardTap(args: TapGestureEventData) {
   }
   const m = /^card(\d+)Card$/.exec(String(view.id || ''))
   const idx = m ? Number(m[1]) : -1
-  console.log('[NZ][home] offer detail (stub', idx >= 0 ? offers[idx].id : 'n/a', ')')
+  if (idx >= 0 && idx < offers.length) {
+    view.page.frame.navigate({
+      moduleName: 'features/offers/screens/offer-detail-page',
+      context: { offer: offers[idx], offers: offers, savedIds: Array.from(savedIds) },
+    })
+  }
 }
 
 export function onTabTap(args: EventData) {
-  const tab = String((<View>args.object).id || '')
-  if (tab === 'tab0') {
+  const view = <View>args.object
+  const tab = String(view.id || '')
+  if (tab === 'tab0' || !view.page) {
     return // already home
   }
-  console.log('[NZ][home] tab ->', tab, '(coming in a later pass)')
+  if (tab === 'tab1') {
+    view.page.frame.navigate({
+      moduleName: 'features/discovery/screens/categories-page',
+      context: { offers: offers, savedIds: Array.from(savedIds) },
+    })
+  } else if (tab === 'tab2') {
+    view.page.frame.navigate({
+      moduleName: 'features/saved/screens/saved-page',
+      context: { offers: offers, savedIds: Array.from(savedIds) },
+    })
+  } else if (tab === 'tab3') {
+    view.page.frame.navigate({ moduleName: 'signin-page' })
+  }
 }
 
 function sink(id: string) {

@@ -1,0 +1,29 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      actionBarHidden="true"
+      navigatingTo="onNavigatingTo"
+      loaded="onLoaded"
+      backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,*">
+    <GridLayout row="0" columns="auto,*" marginTop="42" marginLeft="24" marginRight="24">
+      <GridLayout col="0" class="mvp-back" tap="onBack">
+        <Image src="res://ic_chevron" width="18" height="18" stretch="aspectFit" />
+      </GridLayout>
+      <Label col="1" class="mvp-heading" text="Shop" marginLeft="14" verticalAlignment="center" />
+    </GridLayout>
+    <ScrollView row="1" marginTop="18">
+      <StackLayout marginLeft="24" marginRight="24" paddingBottom="24">
+        <GridLayout class="mvp-shop-hero" marginTop="8">
+          <Label id="shopInitial" class="mvp-shop-initial" text="N" verticalAlignment="middle" horizontalAlignment="center" />
+        </GridLayout>
+        <Label id="shopTitle" class="mvp-detail-title" text="Local shop" textWrap="true" marginTop="22" />
+        <Label id="shopAddress" class="mvp-body" text="Near your selected locality" textWrap="true" marginTop="8" />
+        <Label class="mvp-section-heading" text="Live offers" marginTop="28" />
+        <StackLayout id="shopOffers" marginTop="12" />
+        <GridLayout class="mvp-info-panel" rows="auto,auto" marginTop="12">
+          <Label row="0" class="mvp-overline" text="SHOP DETAILS" />
+          <Label row="1" class="mvp-body" text="Directions, opening hours and contact details will be connected when the shop data service is ready." textWrap="true" marginTop="10" />
+        </GridLayout>
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

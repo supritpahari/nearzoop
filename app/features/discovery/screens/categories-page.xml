@@ -1,0 +1,20 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      actionBarHidden="true"
+      navigatingTo="onNavigatingTo"
+      loaded="onLoaded"
+      backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,*">
+    <GridLayout row="0" columns="auto,*" marginTop="42" marginLeft="24" marginRight="24">
+      <GridLayout col="0" class="mvp-back" tap="onBack">
+        <Image src="res://ic_chevron" width="18" height="18" stretch="aspectFit" />
+      </GridLayout>
+      <StackLayout col="1" marginLeft="14" verticalAlignment="center">
+        <Label class="mvp-heading" text="Categories" />
+        <Label class="mvp-subheading" text="Live offers near you" />
+      </StackLayout>
+    </GridLayout>
+    <ScrollView row="1" marginTop="18">
+      <GridLayout id="categoriesGrid" columns="*,*" rows="auto,auto,auto,auto" marginLeft="24" marginRight="24" paddingBottom="24" />
+    </ScrollView>
+  </GridLayout>
+</Page>

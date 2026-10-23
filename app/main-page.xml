@@ -14,12 +14,14 @@
       <WebView id="mapWeb" />
 
       <!-- top action stickers -->
-      <GridLayout columns="auto, auto, *, auto" marginLeft="16" marginRight="16"
+      <GridLayout rows="auto" columns="auto, auto, *, auto" marginLeft="16" marginRight="16"
                   marginTop="13" verticalAlignment="top" zIndex="5">
-        <GridLayout id="locSticker" col="0" columns="auto, auto"
+        <GridLayout id="locSticker" col="0" rows="auto" columns="auto"
+                    verticalAlignment="top"
                     tap="onStickerTap" touch="onStickerTouch">
-          <StackLayout id="locStickerShadow" class="ho-topbar-shadow" />
-          <GridLayout id="locStickerCard" class="ho-topbar" columns="auto, auto, auto"
+          <StackLayout id="locStickerShadow" row="0" class="ho-topbar-shadow" />
+          <GridLayout id="locStickerCard" row="0" class="ho-topbar" rows="auto"
+                      columns="auto, auto, auto"
                       padding="9 13 9 11">
             <Image col="0" src="res://ic_locate_red" width="19" height="19"
                    verticalAlignment="center" stretch="aspectFit" />
@@ -106,7 +108,7 @@
     </GridLayout>
 
     <!-- =========================== bottom nav =========================== -->
-    <GridLayout row="1" columns="1, 1, 1, 1" backgroundColor="#FFFFFF" height="76"
+    <GridLayout row="1" columns="*, *, *, *" backgroundColor="#FFFFFF" height="76"
                 id="navBar">
       <StackLayout col="0" id="tab0" tap="onTabTap" touch="onLinkTouch"
                    horizontalAlignment="center" verticalAlignment="center">

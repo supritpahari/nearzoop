@@ -1,0 +1,24 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      actionBarHidden="true"
+      navigatingTo="onNavigatingTo"
+      loaded="onLoaded"
+      backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,auto,*">
+    <GridLayout row="0" columns="auto,*" marginTop="42" marginLeft="24" marginRight="24">
+      <GridLayout col="0" class="mvp-back" tap="onBack">
+        <Image src="res://ic_chevron" width="18" height="18" stretch="aspectFit" />
+      </GridLayout>
+      <GridLayout col="1" class="mvp-search-field" marginLeft="12">
+        <TextField id="searchField" class="mvp-search-input" hint="Shops, offers, brands..." textChange="onQueryChange" returnPress="onQueryChange" />
+      </GridLayout>
+    </GridLayout>
+    <Label row="1" class="mvp-subheading" text="Search offers from shops around you" marginTop="16" marginLeft="26" />
+    <ScrollView row="2" marginTop="18">
+      <StackLayout marginLeft="24" marginRight="24" paddingBottom="24">
+        <Label id="searchSection" class="mvp-overline" text="POPULAR NEARBY" marginBottom="10" />
+        <StackLayout id="searchSuggestions" />
+        <StackLayout id="searchResults" />
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

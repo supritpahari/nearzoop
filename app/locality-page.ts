@@ -2,9 +2,7 @@
  * Locality search — Nominatim (OpenStreetMap) backed, keyless and free
  * forever (the same OSM family the app's tiles already ride on): one
  * request per 800 ms of settled typing, India-fenced, most recent answer
- * wins. Every choice opens the shared sticker dialog; an agreement is what
- * writes the area to the device store (and the signed-in profile) and
- * releases to home. Nothing saves on a cancel or a back-out.
+ * wins. Selecting a result saves it as the current area and opens home.
  */
 import {
   EventData,
@@ -20,9 +18,8 @@ import {
 import { onLinkTouch, onStickerTouch, defuseWindowAutofill } from './press-feel'
 import { errText } from './firebase'
 import { LocatedArea, persistFix, radiusKmFor } from './locate'
-import { onDlgScrimTap, openDialog } from './nz-dialog'
 
-export { onLinkTouch, onStickerTouch, onDlgScrimTap }
+export { onLinkTouch, onStickerTouch }
 
 type Row = {
   lat: number
@@ -282,12 +279,11 @@ function rowView(r: Row, i: number): View {
   col.addChild(det)
   row.addChild(col)
 
-  row.on('tap', () => confirmRow(row, r))
+  row.on('tap', () => selectRow(row, r))
   return row
 }
 
-/* the confirm conversation: nothing writes until the primary says so */
-function confirmRow(row: View, r: Row) {
+function selectRow(row: View, r: Row) {
   const page = pageRef
   if (!page) {
     return
@@ -296,28 +292,16 @@ function confirmRow(row: View, r: Row) {
     .animate({ translate: { x: 2, y: 2 }, duration: 70 })
     .then(() => row.animate({ translate: { x: 0, y: 0 }, duration: 110 }))
     .catch(() => undefined)
-  const short = r.locality || 'this place'
-  openDialog(page, {
-    title: 'Is ' + short + ' right?',
-    body:
-      'Offers will come from ' +
-      (r.detail ? r.detail : 'this exact pin') +
-      '. Your radius slider carries over.',
-    primaryLabel: 'Yes — use this',
-    onPrimary: () => {
-      const area: LocatedArea = {
-        lat: r.lat,
-        lng: r.lng,
-        radiusKm: radiusKmFor(),
-        accuracyM: 0,
-        locality: r.locality,
-        setTimeMs: Date.now(),
-      }
-      persistFix(area)
-      toMain(page)
-    },
-    secondaryLabel: 'Back to search',
-  })
+  const area: LocatedArea = {
+    lat: r.lat,
+    lng: r.lng,
+    radiusKm: radiusKmFor(),
+    accuracyM: 0,
+    locality: r.locality,
+    setTimeMs: Date.now(),
+  }
+  persistFix(area)
+  toMain(page)
 }
 
 function toMain(page: Page) {

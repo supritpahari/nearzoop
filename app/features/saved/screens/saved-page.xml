@@ -1,0 +1,27 @@
+<Page xmlns="http://schemas.nativescript.org/tns.xsd"
+      actionBarHidden="true"
+      navigatingTo="onNavigatingTo"
+      loaded="onLoaded"
+      backgroundColor="#F4ECDF">
+  <GridLayout rows="auto,*">
+    <StackLayout row="0" marginTop="42" marginLeft="24" marginRight="24">
+      <Label class="mvp-heading" text="Saved" />
+      <Label class="mvp-subheading" text="Kept close for later" marginTop="4" />
+    </StackLayout>
+    <ScrollView row="1" marginTop="18">
+      <StackLayout marginLeft="24" marginRight="24" paddingBottom="24">
+        <StackLayout id="savedOffers" />
+        <StackLayout id="savedEmpty" visibility="collapse" marginTop="38">
+          <GridLayout class="mvp-empty-art">
+            <Image src="res://ic_bkm_save" width="38" height="38" stretch="aspectFit" />
+          </GridLayout>
+          <Label class="mvp-section-heading" text="Nothing saved yet." marginTop="22" />
+          <Label class="mvp-body" text="Tap the bookmark on any offer to keep it here." textWrap="true" marginTop="8" />
+          <GridLayout class="mvp-primary-button" marginTop="22" tap="onBrowse">
+            <Label class="mvp-primary-button-text" text="Browse nearby offers" horizontalAlignment="center" verticalAlignment="middle" />
+          </GridLayout>
+        </StackLayout>
+      </StackLayout>
+    </ScrollView>
+  </GridLayout>
+</Page>

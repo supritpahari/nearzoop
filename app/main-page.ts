@@ -34,7 +34,7 @@ import * as geolocation from '@nativescript/geolocation'
 import { encodeSpec, MapSpec, mountMap, pushSpec } from './map-src'
 import { onStickerTouch, onLinkTouch } from './press-feel'
 import { errText, firebaseDb, saveUserArea } from './firebase'
-import { Offer } from './features/offers/domain/offer'
+import { Offer, categoryForOffer } from './features/offers/domain/offer'
 
 export { onStickerTouch, onLinkTouch }
 
@@ -82,6 +82,10 @@ let fixingBusy = false
 let mapMounted = false
 let mapKey = ''
 
+/* chip row categories — chipOn is the active index (0 = All => no filter) */
+const CATS = ['All', 'Food', 'Mishti', 'Fashion', 'Groceries', 'Electronics']
+let chipOn = 0
+
 /* ------------------------------- lifecycle -------------------------------- */
 
 export function navigatingTo(args: EventData) {
@@ -96,6 +100,7 @@ export function onLoaded(args: EventData) {
   pageRef = <Page>args.object
   ensureChrome()
   loadAligned()
+  ensureHeaderPoller()
 }
 
 export function onBandLoaded(args: EventData) {
@@ -128,9 +133,12 @@ function ensureChrome() {
   }
   bandW = size.width
   bandH = size.height
+  // mock geometry: the radius circle rides fitBounds pads (96 top / 43% bottom)
+  // which lands its center ~32% down the screen, diameter ≈ 314dp, lower arc
+  // tucked under the sheet edge exactly like the design
   center = {
     x: 0.497 * bandW,
-    y: 0.427 * bandH,
+    y: Math.round(96 + (bandH - 96 - 0.43 * bandH) / 2),
   }
   chromeReady = true
 
@@ -138,7 +146,8 @@ function ensureChrome() {
 
   const sheet = <View>pageRef.getViewById('sheet')
   if (sheet) {
-    sheet.height = Math.round(0.592 * bandH)
+    // mock sheet: top edge at 41% of the screen (59% minus the tab bar)
+    sheet.height = Math.round(0.547 * bandH)
     sheet.style.zIndex = 10 // bubble layer is added last; the sheet must stay above
   }
 
@@ -147,15 +156,19 @@ function ensureChrome() {
   bakeShadow('btnSearchShadow')
   bakeShadow('btnBellShadow')
   bakeShadow('btnAllShadow')
+  for (let i = 0; i < CATS.length; i++) {
+    bakeShadow('chipSh' + i)
+  }
 
-  // round side buttons stack down the ring's right edge
+  // round side buttons: crosshair rides the ring's right edge at its center
+  // line; the layers button sits just below it (mock pair)
   const locate = <View>pageRef.getViewById('btnLocate')
   const layers = <View>pageRef.getViewById('btnLayers')
   if (locate) {
-    locate.marginTop = Math.max(60, Math.round(center.y - 66))
+    locate.marginTop = Math.max(60, center.y - 23)
   }
   if (layers) {
-    layers.marginTop = Math.max(110, Math.round(center.y - 12))
+    layers.marginTop = Math.max(120, center.y + 36)
   }
 
   lift('btnLocateCard', 5)
@@ -205,13 +218,13 @@ function clipChildren(band: View) {
 async function loadAligned() {
   try {
     const db = await firebaseDb()
-    const snap = await db.collection('shops').limit(50).get()
+    const snap = await db.collection('shops').limit(120).get()
     const docs: Offer[] = []
     ;(<any>snap).forEach((d: any) => {
       const v = <any>(d.data && typeof d.data === 'function' ? d.data() : d.data) || {}
       const text = String(v.text || '').trim()
       if (text && isFinite(v.lat) && isFinite(v.lng)) {
-        docs.push({
+        const o: Offer = {
           id: String(d.id || ''),
           lat: Number(v.lat),
           lng: Number(v.lng),
@@ -222,101 +235,25 @@ async function loadAligned() {
           shop: v.shop ? String(v.shop) : undefined,
           color: v.color ? String(v.color) : undefined,
           endsAtMs: isFinite(v.endsAtMs) ? Number(v.endsAtMs) : undefined,
-        })
+          category: v.category ? String(v.category) : undefined,
+        }
+        // docs without a category get the ad-hoc classifier; every card then
+        // answers to exactly one chip
+        if (!o.category) {
+          o.category = categoryForOffer(o)
+        }
+        docs.push(o)
       }
     })
-    corpus = docs.length ? docs : makeDemoOffers()
+    corpus = docs
     loadedAt = Date.now()
+    console.log('[NZ][home] shops read:', docs.length, 'docs')
     presentOffers()
   } catch (err) {
     console.log('[NZ][home] offers read blocked:', errText(err))
-    corpus = makeDemoOffers()
     loadedAt = Date.now()
-    presentOffers()
+    presentOffers() // honest empty state; no in-memory stand-ins
   }
-}
-
-type MockOffer = {
-  off: [number, number] // dp offset: east / south of the area centre
-  text: string
-  fontSize: number
-  sub?: string
-  title: string
-  shop: string
-  color: string
-  ends: [number, number, number] // dayOffset, hour24, minute (local time)
-}
-
-const MOCK_OFFERS: MockOffer[] = [
-  {
-    off: [10, 24], text: 'BOGO', fontSize: 14.5, sub: 'PLATES',
-    title: 'Buy 1 plate, get 1 free', shop: 'Phuchka Phactory', color: 'red',
-    ends: [0, 21, 0],
-  },
-  {
-    off: [-15, 20], text: '10', fontSize: 16, sub: 'FOR 8',
-    title: '10 rosgogolla for the price of 8', shop: 'Nolen Gur Sweets',
-    color: 'pink', ends: [3, 21, 30],
-  },
-  {
-    off: [27, 13], text: '20%', fontSize: 16, sub: 'OFF',
-    title: 'Puja collection — flat 20% off', shop: 'Gariahat Saree Ghar',
-    color: 'amber', ends: [4, 22, 0],
-  },
-  {
-    off: [39, -142], text: '₹699', fontSize: 15,
-    title: 'Mishti hamper pick of the week', shop: 'Shri Mistanna Bhandar',
-    color: 'red', ends: [0, 22, 30],
-  },
-  {
-    off: [117, -2], text: '15%', fontSize: 14.5, sub: 'OFF',
-    title: 'Mishti boxes at 15% off', shop: 'Dakshin Cafe',
-    color: 'amber', ends: [2, 20, 0],
-  },
-  {
-    off: [-60, 90], text: '₹500', fontSize: 16, sub: 'COMBO',
-    title: 'Combo dinner under ₹500', shop: 'Deshi Kitchen',
-    color: 'red', ends: [0, 23, 0],
-  },
-  {
-    off: [-150, 60], text: 'FREE', fontSize: 14, sub: 'TEA',
-    title: 'Free lemon tea with any thali', shop: 'Rimbick Kitchen',
-    color: 'amber', ends: [1, 12, 30],
-  },
-  {
-    off: [-90, -120], text: '25%', fontSize: 15, sub: 'OFF',
-    title: 'Dessert bar, flat 25% off', shop: 'Ballygunge Bistro',
-    color: 'pink', ends: [5, 21, 45],
-  },
-]
-
-function endsAtFor(spec: [number, number, number], nowMs: number): number {
-  const base = new Date(nowMs)
-  const d = new Date(base.getFullYear(), base.getMonth(), base.getDate())
-  d.setDate(d.getDate() + spec[0])
-  d.setHours(spec[1], spec[2], 0, 0)
-  if (d.getTime() <= nowMs) {
-    d.setDate(d.getDate() + 1) // this slot already passed: same slot tomorrow
-  }
-  return d.getTime()
-}
-
-function makeDemoOffers(): Offer[] {
-  const area = areaRef || DEFAULT_CENTER
-  const latRad = (area.lat * Math.PI) / 180
-  const now = Date.now()
-  return MOCK_OFFERS.map((mock, index) => ({
-    id: `preview-${index + 1}`,
-    lat: area.lat - mock.off[1] / DP_PER_KM / 111.32,
-    lng: area.lng + mock.off[0] / DP_PER_KM / (111.32 * Math.cos(latRad)),
-    text: mock.text,
-    fontSize: mock.fontSize,
-    sub: mock.sub,
-    title: mock.title,
-    shop: mock.shop,
-    color: mock.color,
-    endsAtMs: endsAtFor(mock.ends, now),
-  }))
 }
 
 /* ---------------------------- present on screen ---------------------------- */
@@ -327,7 +264,9 @@ function presentOffers() {
   }
   const c = areaRef || { lat: DEFAULT_CENTER.lat, lng: DEFAULT_CENTER.lng }
   const km = areaRef ? areaRef.radiusKm : defaultRadius()
+  const cat = CATS[chipOn]
   offers = corpus
+    .filter((o) => cat === 'All' || (o.category || '') === cat)
     .map((o) => ({ o: o, d: distanceKm(c.lat, c.lng, o.lat, o.lng) }))
     .filter((x) => x.d <= km + 0.001)
     .sort((a, b) => a.d - b.d)
@@ -339,19 +278,120 @@ function presentOffers() {
     count.text = offers.length + (offers.length === 1 ? ' offer' : ' offers') + ' nearby'
   }
   if (meta) {
-    meta.text = 'Within ' + fmtKm(km) + ' km · ' + relTime(loadedAt)
+    meta.text =
+      'Within ' + fmtKm(km) + ' km' + (cat === 'All' ? '' : ' · ' + cat) +
+      ' · ' + relTime(loadedAt)
   }
 
-  // the header sticker mirrors the saved area
-  const line = <Label>pageRef.getViewById('locLine')
-  if (line) {
-    line.text =
-      (areaRef && areaRef.locality ? areaRef.locality : 'Gariahat') +
-      ' · ' + fmtKm(km) + ' km'
-  }
+  // the top bar paints through the poll pipeline (cached first, honest later)
+  refreshHeader()
 
   primeMap(false)
   renderCards()
+}
+
+/* ------------------------- top bar refresh pipeline ------------------------ */
+
+/* The bar paints the persisted area immediately (cached first — no locate at
+ * load), then one quiet GPS check every 2 minutes keeps the name honest.
+ * The loop only fires while the app is open; backgrounding the app stops the
+ * work without needing any foreground-service. The search area itself never
+ * moves from the poll — the bar is the only thing it keeps up to date. */
+let hdrTimer: number | null = null
+let hdrOpen = true
+let hdrWired = false
+let hdrName: string | null = null
+
+function headerKm(): number {
+  return areaRef && isFinite(areaRef.radiusKm) ? areaRef.radiusKm : defaultRadius()
+}
+
+function refreshHeader(): void {
+  const line = pageRef ? <Label>pageRef.getViewById('locLine') : null
+  if (!line) {
+    return
+  }
+  const name =
+    hdrName !== null ? hdrName : areaRef ? areaRef.locality || 'Here' : 'Kolkata'
+  line.text = name + ' · ' + fmtKm(headerKm()) + ' km'
+}
+
+function ensureHeaderPoller(): void {
+  // activity room hooks: the poll must not spend GPS while the app is closed
+  if (!hdrWired && Application.android) {
+    hdrWired = true
+    Application.android.on('activityResumed', () => {
+      hdrOpen = true
+    })
+    Application.android.on('activityPaused', () => {
+      hdrOpen = false
+    })
+  }
+  if (hdrTimer) {
+    clearInterval(hdrTimer)
+  }
+  hdrTimer = setInterval(pollHeader, 2 * 60 * 1000)
+}
+
+async function pollHeader(): Promise<void> {
+  if (!pageRef || !hdrOpen) {
+    return
+  }
+  try {
+    const loc = await geolocation.getCurrentLocation({
+      desiredAccuracy: ACC_HIGH,
+      updateTime: 4000,
+      timeout: 15000,
+    })
+    const name = await nameBudget(
+      nameLocality(<Area>{ lat: loc.latitude, lng: loc.longitude }),
+      2500
+    )
+    hdrName = name || 'Here'
+    console.log('[NZ][hdr] poll fix', loc.latitude.toFixed(5), loc.longitude.toFixed(5), hdrName)
+    refreshHeader()
+  } catch (err) {
+    console.log('[NZ][hdr] poll skipped:', errText(err))
+  }
+}
+
+/* --------------------------- category chip row ----------------------------- */
+
+export function onChipTap(args: EventData) {
+  const v = <View>args.object
+  if (v.page) {
+    pageRef = v.page
+  }
+  const i = Number(String(v.id || '').replace('chip', ''))
+  if (!isFinite(i) || i < 0 || i >= CATS.length) {
+    return
+  }
+  if (i === chipOn) {
+    sink('chipC' + i)
+    return
+  }
+  chipOn = i
+  restyleChips()
+  presentOffers()
+  sink('chipC' + i)
+  console.log('[NZ][home] chip ->', CATS[i])
+}
+
+/* active chip inverts to ink with cream text; the rest fall back to cream */
+function restyleChips() {
+  if (!pageRef) {
+    return
+  }
+  for (let i = 0; i < CATS.length; i++) {
+    const card = <View>pageRef.getViewById('chipC' + i)
+    if (card) {
+      card.className = i === chipOn ? 'ho-chipc-on' : 'ho-chipc'
+    }
+    const lb = <Label>pageRef.getViewById('chipT' + i)
+    if (lb) {
+      lb.className = i === chipOn ? 'ho-chipT-on' : 'ho-chipT'
+    }
+  }
 }
 
 /* --------------------------------- map ------------------------------------ */
@@ -379,7 +419,9 @@ function buildMapSpec(): MapSpec {
     lat: c.lat,
     lng: c.lng,
     radiusKm: km,
-    padB: 0.66, // the offers sheet eats the lower band on this page
+    // mock frame: top pad (96, map-src default) parks the ring top under the
+    // chip row; the bottom 43% lets the lower arc tuck behind the sheet edge
+    padB: 0.43,
     bubbles: offers.map((o) => ({
       lat: o.lat,
       lng: o.lng,
@@ -435,30 +477,52 @@ function buildCard(o: Offer, i: number): View {
   const c = areaRef || { lat: DEFAULT_CENTER.lat, lng: DEFAULT_CENTER.lng }
   const dKm = distanceKm(c.lat, c.lng, o.lat, o.lng)
 
+  /* host overlaps the face over a hard ink block: Android elevation renders a
+   * soft glow — the mock wants crisp offset shadows (card and tile both) */
+  const host = new GridLayout()
+  host.marginLeft = 16
+  host.marginRight = 16
+  host.marginBottom = 13
+
+  // shadow drawn as a StackLayout — the proven sticker-shadow structure from
+  // the top bar, where its CSS radius verifiably paints on this core
+  const shadow = new StackLayout()
+  shadow.className = 'ho-cardshadow'
+  shadow.borderRadius = 16
+  shadow.translateX = 3
+  shadow.translateY = 4
+  host.addChild(shadow)
+
   const card = new GridLayout()
   card.id = 'card' + i + 'Card'
   card.className = 'ho-card'
+  card.borderRadius = 16
   card.rows = 'auto, auto'
-  card.columns = '92, *'
-  card.padding = '12 14 13 14'
-  card.marginBottom = 12
+  card.columns = '76, *'
+  card.padding = '13 16 14 15'
   card.on('tap', <any>onCardTap)
-  if (card.android) {
-    try {
-      (<any>card).elevation = 6
-    } catch {
-      // flat card still reads fine
-    }
-  }
 
-  // offer tile (left square, colour by data)
+  // offer tile (mock: 64dp square, ink border, own hard shadow)
+  const tileHost = new GridLayout()
+  tileHost.col = 0
+  tileHost.rowSpan = 2
+  const tileSh = new StackLayout()
+  tileSh.className = 'ho-tileshadow'
+  tileSh.width = 64
+  tileSh.height = 64
+  tileSh.translateX = 2.5
+  tileSh.translateY = 3
+  tileSh.horizontalAlignment = 'left'
+  tileSh.verticalAlignment = 'top'
+  tileHost.addChild(tileSh)
+
   const tile = new StackLayout()
-  tile.col = 0
-  tile.rowSpan = 2
-  tile.width = 88
-  tile.height = 88
+  tile.width = 64
+  tile.height = 64
   tile.className = 'ho-tile'
   tile.backgroundColor = T_COLOR[o.color || 'red'] || T_COLOR.red
+  tile.horizontalAlignment = 'left'
+  tile.verticalAlignment = 'top'
   const tileBox = new StackLayout()
   tileBox.orientation = 'vertical'
   tileBox.horizontalAlignment = 'center'
@@ -467,7 +531,7 @@ function buildCard(o: Offer, i: number): View {
   tileText.className = 'ho-tile-text'
   tileText.text = o.text
   tileText.textAlignment = 'center'
-  tileText.fontSize = o.text.length <= 3 ? 18 : o.text.length === 4 ? 16.5 : 14.5
+  tileText.fontSize = o.text.length <= 3 ? 19.5 : o.text.length === 4 ? 15.5 : 13.5
   tileBox.addChild(tileText)
   if (o.sub) {
     const tileSub = new Label()
@@ -478,7 +542,8 @@ function buildCard(o: Offer, i: number): View {
     tileBox.addChild(tileSub)
   }
   tile.addChild(tileBox)
-  card.addChild(tile)
+  tileHost.addChild(tile)
+  card.addChild(tileHost)
 
   // title + bookmark share the top-right cell
   const title = new Label()
@@ -499,6 +564,7 @@ function buildCard(o: Offer, i: number): View {
   bkm.stretch = 'aspectFit'
   bkm.horizontalAlignment = 'right'
   bkm.verticalAlignment = 'top'
+  bkm.marginTop = 3
   bkm.on('tap', <any>onSaveTap)
   card.addChild(bkm)
 
@@ -506,7 +572,7 @@ function buildCard(o: Offer, i: number): View {
   const under = new StackLayout()
   under.col = 1
   under.row = 1
-  under.marginTop = 9
+  under.marginTop = 8
   const shopRow = new StackLayout()
   shopRow.orientation = 'horizontal'
   const shopIco = new Image()
@@ -526,14 +592,16 @@ function buildCard(o: Offer, i: number): View {
 
   const chips = new StackLayout()
   chips.orientation = 'horizontal'
-  chips.marginTop = 8
+  chips.marginTop = 7
   chips.addChild(chip('res://ic_pin_ink', fmtDist(dKm), 'ho-chip-text'))
   if (o.endsAtMs && o.endsAtMs > Date.now()) {
     chips.addChild(chip('res://ic_clock_end', fmtEnds(o.endsAtMs), 'ho-chip-end'))
   }
   under.addChild(chips)
   card.addChild(under)
-  return card
+
+  host.addChild(card)
+  return host
 }
 
 function chip(ico: string, text: string, textClass: string): GridLayout {
@@ -541,6 +609,7 @@ function chip(ico: string, text: string, textClass: string): GridLayout {
   shell.className = 'ho-chip'
   shell.columns = 'auto, auto'
   const im = new Image()
+  im.col = 0
   im.src = ico
   im.width = 12
   im.height = 12
@@ -548,6 +617,7 @@ function chip(ico: string, text: string, textClass: string): GridLayout {
   im.verticalAlignment = 'middle'
   shell.addChild(im)
   const lb = new Label()
+  lb.col = 1
   lb.className = textClass
   lb.text = text
   lb.verticalAlignment = 'middle'
@@ -663,6 +733,33 @@ async function serviceReady(): Promise<boolean> {
   }
 }
 
+/* the device Geocoder stalls for minutes on this ROM — same budget the
+ * location page uses, so the header atom never waits on it */
+function nameBudget(p: Promise<string>, ms: number): Promise<string> {
+  return new Promise<string>((resolve) => {
+    let done = false
+    const t = setTimeout(() => {
+      if (!done) {
+        done = true
+        resolve('')
+      }
+    }, ms)
+    p.then((n) => {
+      clearTimeout(t)
+      if (!done) {
+        done = true
+        resolve(n)
+      }
+    }).catch(() => {
+      clearTimeout(t)
+      if (!done) {
+        done = true
+        resolve('')
+      }
+    })
+  })
+}
+
 async function readFix(): Promise<boolean> {
   try {
     const loc = await geolocation.getCurrentLocation({
@@ -671,26 +768,27 @@ async function readFix(): Promise<boolean> {
       timeout: 12000,
     })
     const acc = Number(loc.horizontalAccuracy)
+    // the device MOVED: the previous label must not ride along — "Gariahat"
+    // over a Kharagpur fix is how the header lied. The sticker reads Here
+    // until a budgeted geocode actually names the new spot.
     areaRef = {
       lat: loc.latitude,
       lng: loc.longitude,
       radiusKm: areaRef ? areaRef.radiusKm : defaultRadius(),
       accuracyM: isFinite(acc) ? acc : 0,
-      locality: areaRef ? areaRef.locality : undefined,
+      locality: undefined,
       setTimeMs: Date.now(),
     }
     persistAreaLocal(areaRef)
     writeStateToUser(areaRef)
     presentOffers()
-    // label the fresh fix with a locality when the device Geocoder can
-    nameLocality(areaRef).then((name) => {
-      if (name && areaRef && name !== areaRef.locality) {
-        areaRef.locality = name
-        persistAreaLocal(areaRef)
-        writeStateToUser(areaRef)
-        presentOffers()
-      }
-    })
+    const name = await nameBudget(nameLocality(areaRef), 2500)
+    if (name && areaRef) {
+      areaRef.locality = name
+      persistAreaLocal(areaRef)
+      writeStateToUser(areaRef)
+      presentOffers()
+    }
     console.log('[NZ][home] fresh fix', loc.latitude.toFixed(5), loc.longitude.toFixed(5))
     return true
   } catch (err) {
@@ -905,7 +1003,7 @@ export function onTabTap(args: EventData) {
       context: { offers: offers, savedIds: Array.from(savedIds) },
     })
   } else if (tab === 'tab3') {
-    view.page.frame.navigate({ moduleName: 'signin-page' })
+    view.page.frame.navigate({ moduleName: 'choose-page' })
   }
 }
 

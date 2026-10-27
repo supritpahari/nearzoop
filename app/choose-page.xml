@@ -1,0 +1,113 @@
+<Page
+    xmlns="http://schemas.nativescript.org/tns.xsd"
+    actionBarHidden="true"
+    backgroundColor="#F4ECDF">
+  <GridLayout rows="*, auto, auto">
+
+    <!-- ==================== art: the offer ring around a tiny shop ==================== -->
+    <GridLayout rows="auto" horizontalAlignment="center" verticalAlignment="top"
+                height="322" marginTop="4">
+      <!-- pre-baked dashed radius ring (same art language as the splash) -->
+      <Image src="res://nz_ring_k12" width="262" height="262"
+             horizontalAlignment="center" verticalAlignment="top" marginTop="30"
+             stretch="aspectFit" />
+
+      <!-- the little storefront: striped awning over a cream facade -->
+      <StackLayout width="140" horizontalAlignment="center" verticalAlignment="top"
+                   marginTop="104">
+        <StackLayout class="cz-awning" orientation="horizontal" width="140" height="28">
+          <StackLayout backgroundColor="#FB4B32" width="28" />
+          <StackLayout backgroundColor="#FFFDF6" width="26" />
+          <StackLayout backgroundColor="#F2A81D" width="28" />
+          <StackLayout backgroundColor="#FFFDF6" width="26" />
+          <StackLayout backgroundColor="#FB4B32" width="26" />
+        </StackLayout>
+        <GridLayout class="cz-facade" width="140" height="100">
+          <GridLayout class="cz-window" width="32" height="32"
+                      horizontalAlignment="left" verticalAlignment="top"
+                      marginLeft="18" marginTop="18" />
+          <GridLayout class="cz-badge" width="26" height="26"
+                      horizontalAlignment="right" verticalAlignment="top"
+                      marginRight="20" marginTop="18">
+            <Label class="cz-rupee" text="₹"
+                   horizontalAlignment="center" verticalAlignment="middle" />
+          </GridLayout>
+          <GridLayout class="cz-door" width="26" height="40"
+                      horizontalAlignment="right" verticalAlignment="bottom"
+                      marginRight="20" />
+        </GridLayout>
+      </StackLayout>
+
+      <!-- offer pills drifting like the home map -->
+      <GridLayout width="52" height="31" marginTop="132" marginLeft="26"
+                  horizontalAlignment="left" verticalAlignment="top">
+        <StackLayout class="bub-shadow" width="52" height="28" marginLeft="3" marginTop="3" />
+        <StackLayout class="bub" width="52" height="28">
+          <Label class="bub-text" text="25%" fontSize="15"
+                 horizontalAlignment="center" verticalAlignment="middle" />
+        </StackLayout>
+      </GridLayout>
+
+      <GridLayout width="58" height="31" marginTop="54" marginRight="26"
+                  horizontalAlignment="right" verticalAlignment="top">
+        <StackLayout class="bub-shadow" width="58" height="28" marginLeft="3" marginTop="3" />
+        <StackLayout class="bub" width="58" height="28">
+          <Label class="bub-text" text="₹699" fontSize="15"
+                 horizontalAlignment="center" verticalAlignment="middle" />
+        </StackLayout>
+      </GridLayout>
+
+      <GridLayout width="54" height="31" marginTop="232" marginRight="46"
+                  horizontalAlignment="right" verticalAlignment="top">
+        <StackLayout class="bub-shadow" width="54" height="28" marginLeft="3" marginTop="3" />
+        <StackLayout class="bub" width="54" height="28">
+          <Label class="bub-text" text="FREE" fontSize="15"
+                 horizontalAlignment="center" verticalAlignment="middle" />
+        </StackLayout>
+      </GridLayout>
+    </GridLayout>
+
+    <!-- ==================== continue-as caption + the two doors ==================== -->
+    <Label row="1" class="ho-cap" text="C O N T I N U E   A S"
+           horizontalAlignment="center" marginBottom="14" />
+
+    <StackLayout row="2" marginLeft="27" marginRight="27" marginBottom="30">
+      <GridLayout id="userBtn" height="63" tap="onUser" touch="onStickerTouch">
+        <GridLayout class="ls-btn-shadow" height="59" marginTop="4" marginRight="4" />
+        <GridLayout class="ls-btn-primary" height="59" marginLeft="4">
+          <Label class="ls-btn-text-primary" text="Sign In as User"
+                 horizontalAlignment="center" verticalAlignment="middle" />
+        </GridLayout>
+      </GridLayout>
+
+      <GridLayout id="bizBtn" height="63" marginTop="16" tap="onBusiness" touch="onStickerTouch">
+        <GridLayout class="ls-btn-shadow" height="59" marginTop="4" marginRight="4" />
+        <GridLayout class="ls-btn-sec" height="59" marginLeft="4">
+          <Label class="ls-btn-text-secondary" text="Sign In as Business"
+                 horizontalAlignment="center" verticalAlignment="middle" />
+        </GridLayout>
+      </GridLayout>
+    </StackLayout>
+
+    <!-- shared NZ sticker dialog (Coming soon in this app only!) -->
+    <GridLayout row="0" rowSpan="3" id="nzDlgLayer" visibility="collapse">
+      <GridLayout id="nzDlgScrim" class="bs-scrim" opacity="0" tap="onDlgScrimTap" />
+      <GridLayout
+          id="nzDlgBox"
+          rows="auto"
+          verticalAlignment="top" horizontalAlignment="stretch"
+          marginTop="168" marginLeft="27" marginRight="27">
+        <GridLayout
+            id="nzDlgShadow"
+            class="dlg-shadow"
+            horizontalAlignment="stretch"
+            marginTop="4" marginRight="4" />
+        <GridLayout
+            id="nzDlgCard"
+            class="dlg-card"
+            columns="*"
+            horizontalAlignment="stretch" />
+      </GridLayout>
+    </GridLayout>
+  </GridLayout>
+</Page>

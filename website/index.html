@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NearZoop — Offers in your Locality, right now.</title>
+  <meta name="description" content="NearZoop pins live offers from the shops around you as stickers on a real streets map — saree deals in Gariahat, mishti in Bara Bazar. Browse without an account; bookmark the good ones.">
+  <meta name="theme-color" content="#FB4B32">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('nz.theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="icon" href="/assets/img/logo.png">
+  <meta property="og:title" content="NearZoop — Offers in your Locality, right now.">
+  <meta property="og:description" content="Live offers from the shops around you, pinned as stickers on a real streets map.">
+  <meta property="og:url" content="https://nearzoop.web.app/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="NearZoop">
+  <meta property="og:image" content="/assets/img/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="stylesheet" href="/assets/css/landing.css?v=2026-4">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <div class="wrap">
+      <a class="brand" href="#top">
+        <img src="/assets/img/logo.png" alt="NearZoop logo">
+        <span>NearZoop</span>
+      </a>
+      <nav class="nav-links" aria-label="Sections">
+        <a href="#how">How it works</a>
+        <a href="#categories">Categories</a>
+        <a href="#shops">For shops</a>
+      </nav>
+      <div class="nav-cta">
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme">
+          <span class="ico ico-moon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.1A8.6 8.6 0 1 1 9.9 3.5a7.2 7.2 0 1 0 10.6 10.6z"/></svg></span>
+          <span class="ico ico-sun"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5 5l1.6 1.6M17.4 17.4 19 19M19 5l-1.6 1.6M6.6 17.4 5 19"/></svg></span>
+        </button>
+        <span class="nav-flag"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7.6V12l2.9 1.9"/></svg></span>LAUNCHING&nbsp;SOON</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+
+    <!-- ================= HERO ================= -->
+    <section class="hero" id="top">
+      <div class="wrap">
+        <div class="hero-copy">
+          <h1>Offers in your Locality, <span class="accent">right&nbsp;now.</span></h1>
+          <p class="lede">Live offers from the shops around you, pinned as white stickers on a real streets map. Sarees in Gariahat, mishti in Bara Bazar — <b>all a walk away, and no account needed to browse.</b></p>
+          <div class="cta-row">
+            <a class="btn btn-red btn-lg" href="#how">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></span>
+              See how it works
+            </a>
+            <a class="btn btn-paper btn-lg" href="#categories">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7.2" height="7.2" rx="2"/><rect x="13.3" y="3.5" width="7.2" height="7.2" rx="2"/><rect x="3.5" y="13.3" width="7.2" height="7.2" rx="2"/><rect x="13.3" y="13.3" width="7.2" height="7.2" rx="2"/></svg></span>
+              Browse categories
+            </a>
+          </div>
+          <div class="trust">
+            <div>
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.6" width="14" height="9.4" rx="2.6"/><path d="M8.2 10.6V7.9a3.8 3.8 0 0 1 7.6 0v2.7"/></svg></span>
+              Location only while the app is open — never in the background
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-art">
+          <svg class="ring ring-1" viewBox="0 0 520 520" aria-hidden="true"><circle cx="260" cy="260" r="238" fill="none" stroke="#FB4B32" stroke-width="5" stroke-dasharray="0.2 12.5" stroke-linecap="round"/></svg>
+          <svg class="ring ring-2" viewBox="0 0 260 260" aria-hidden="true"><circle cx="130" cy="130" r="118" fill="none" stroke="#FB4B32" stroke-width="4.5" stroke-dasharray="0.2 11.5" stroke-linecap="round"/></svg>
+
+          <svg class="plus plus-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v17M3.5 12h17"/></svg>
+          <svg class="plus plus-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v17M3.5 12h17"/></svg>
+          <svg class="plus plus-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" aria-hidden="true"><path d="M12 3.5v17M3.5 12h17"/></svg>
+
+          <div class="phone-frame">
+            <img src="/assets/img/app-preview.png" alt="The NearZoop home screen: a streets map of your locality with white offer stickers pinned on it">
+            <div class="bub bub-1">₹699<small>MISHTI HAMPER</small></div>
+            <div class="bub bub-2">20% OFF<small>SAREES · GARIAHAT</small></div>
+            <div class="bub bub-3">1+1<small>PHUCHKA PLATES</small></div>
+            <div class="bub bub-4">₹49<small>COFFEE REFILLS</small></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section class="section" id="how">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="overline dot">HOW IT WORKS</div>
+          <h2>Three taps to the <span class="accent">good stuff.</span></h2>
+          <p class="sec-sub">No feeds, no algorithms, no doom-flicking. Just your patch of the city, and what's on offer in it right now.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <span class="step-no">01</span>
+            <span class="step-ico ico-red">
+              <span class="ico" style="color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="6.6"/><path d="M12 2.4v3M12 18.6v3M2.4 12h3M18.6 12h3"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/></svg></span>
+            </span>
+            <h3>Point at your patch</h3>
+            <p>Let the app see your location only while it's open — or search any locality by name or PIN. Gariahat, Bhowanipore, 700019… your lanes are the feed.</p>
+          </div>
+          <div class="step">
+            <span class="step-no">02</span>
+            <span class="step-ico ico-amber">
+              <span class="ico" style="color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 6.9 9 4.6l6 2.3 5.4-2.3v12.5L15 19.4l-6-2.3-5.4 2.3V6.9z"/><path d="M9 4.6v12.5M15 6.9v12.5"/></svg></span>
+            </span>
+            <h3>Dial your radius</h3>
+            <p>Slide from 0.5 km up to 10 km. Offers only come from the streets inside the red dotted circle you confirm — near means near.</p>
+          </div>
+          <div class="step">
+            <span class="step-no">03</span>
+            <span class="step-ico ico-pink">
+              <span class="ico" style="color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.6h10v16.8l-5-3.6-5 3.6V3.6z"/></svg></span>
+            </span>
+            <h3>Bookmark the good ones</h3>
+            <p>Read every offer like a sticker sheet, tap into its shop, and bookmark what's worth the walk. Your saved rail keeps score.</p>
+          </div>
+        </div>
+        <div class="step-pair">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7.6V12l2.9 1.9"/></svg></span>
+          Live counts refresh as shops post
+          <span class="ico" style="margin-left:14px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l5 5"/></svg></span>
+          Browse everything without an account
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CATEGORIES ================= -->
+    <section class="section alt" id="categories">
+      <div class="wrap">
+        <div class="sec-head">
+          <div class="overline dot">THE STICKER SHELF</div>
+          <h2>Six kinds of <span class="accent">local.</span></h2>
+          <p class="sec-sub">Every sticker gets sorted the moment it goes up on the map, so the shelf stays short and shop-fresh.</p>
+        </div>
+        <div class="cat-strip">
+          <div class="cat-tile" style="background:#FB4B32">
+            <span class="cat-num">01</span>
+            <span class="cat-name">Food</span>
+            <span class="cat-meta">food & cafés</span>
+          </div>
+          <div class="cat-tile cat-amber" style="background:#FFC533">
+            <span class="cat-num">02</span>
+            <span class="cat-name">Mishti</span>
+            <span class="cat-meta">the sweet counters</span>
+          </div>
+          <div class="cat-tile" style="background:#F4539B">
+            <span class="cat-num">03</span>
+            <span class="cat-name">Fashion</span>
+            <span class="cat-meta">sarees & fits</span>
+          </div>
+          <div class="cat-tile" style="background:#12A66A">
+            <span class="cat-num">04</span>
+            <span class="cat-name">Groceries</span>
+            <span class="cat-meta">bazaar staples</span>
+          </div>
+          <div class="cat-tile" style="background:#7957F5">
+            <span class="cat-num">05</span>
+            <span class="cat-name">Electronics</span>
+            <span class="cat-meta">gadgets & repairs</span>
+          </div>
+          <div class="cat-tile" style="background:#1C1B19">
+            <span class="cat-num">06</span>
+            <span class="cat-name">Services</span>
+            <span class="cat-meta">salons, tuition, more</span>
+          </div>
+        </div>
+        <div class="cat-note">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7.6V12l2.9 1.9"/></svg></span>
+          Stickers peel themselves off on their last day — so nothing on the shelf is stale.
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= FOR SHOPS ================= -->
+    <section class="section" id="shops">
+      <div class="wrap">
+        <div class="shops-grid">
+          <div class="shops-copy">
+            <div class="overline dot">FOR THE SHOPS</div>
+            <h2>Your counter, on every <span class="accent">map</span> nearby.</h2>
+            <p class="sec-sub">Post an offer from your shop and it lands on the phones of everyone poking around your lanes — no feed to fight, no ranking to buy.</p>
+            <div class="shops-quote">Coupons are claimed in the app and verified at the counter — in person, quick look, done.</div>
+          </div>
+          <div class="shops-list">
+            <div class="row-item">
+              <span class="row-ico ico-red">
+                <span class="ico" style="color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.4 11.6V5.8c0-.8.6-1.4 1.4-1.4h5.8c.4 0 .8.2 1.1.4l7.9 7.9c.6.6.6 1.5 0 2.1l-6.8 6.8c-.6.6-1.5.6-2.1 0l-7.9-7.9a1.5 1.5 0 0 1-.4-1.1z" transform="translate(0.1 0)"/><circle cx="8.4" cy="8.4" r="1.4" fill="currentColor" stroke="none"/></svg></span>
+              </span>
+              <div>
+                <h3>Post a live offer</h3>
+                <p>One screen: what's on, how much, till when. It goes up as a sticker pin on the streets map.</p>
+              </div>
+            </div>
+            <div class="row-item">
+              <span class="row-ico ico-paper">
+                <span class="ico" style="color:var(--ink)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.6h10v16.8l-5-3.6-5 3.6V3.6z"/></svg></span>
+              </span>
+              <div>
+                <h3>Shoppers bookmark you</h3>
+                <p>Anyone passing through can browse without an account — your sticker is seen, tapped, saved.</p>
+              </div>
+            </div>
+            <div class="row-item">
+              <span class="row-ico ico-green">
+                <span class="ico" style="color:#fff"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 12.6 9.8 18 19.5 6.8"/></svg></span>
+              </span>
+              <div>
+                <h3>Verified at the counter</h3>
+                <p>Customers claim in the app; you confirm it's them and honour the deal. At day's end, the tally is simple.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= LAUNCHING SOON ================= -->
+    <section class="cta-band" id="launch">
+      <div class="wrap">
+        <div class="cta-card">
+          <div class="cta-copy">
+            <div class="overline dot">LAUNCHING SOON</div>
+            <h2>Almost on the map.</h2>
+            <p class="cta-sub">The app is still in the works, so there's nothing to download yet. When it lands, this page points the way — Android first, iOS right after.</p>
+            <div class="cta-btns">
+              <span class="badge soon">
+                <span class="ico" style="color:rgba(255,255,255,.9)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.5 4.8v14.4L19.5 12 7.5 4.8z" fill="currentColor" stroke="none"/></svg></span>
+                <span><span class="small">AVAILABLE&nbsp;AT&nbsp;LAUNCH</span><span class="big">Android</span></span>
+              </span>
+              <span class="badge soon">
+                <span class="ico" style="color:rgba(255,255,255,.9)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 7.6V12l2.9 1.9"/></svg></span>
+                <span><span class="small">RIGHT&nbsp;AFTER</span><span class="big">iOS</span></span>
+              </span>
+            </div>
+          </div>
+          <div class="cta-stick" aria-hidden="true"><b>20% OFF</b><span>ON THE WALK OVER</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <div>
+        <div class="foot-brand"><img src="/assets/img/logo.png" alt="">NearZoop</div>
+        <div class="foot-tag">Offers in your Locality, right now. · © 2026 NearZoop</div>
+        <div class="foot-credit">Developing and Testing carried out by <a href="https://teamobliq.in" target="_blank" rel="noopener noreferrer">Team Obliq</a></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+        <nav class="foot-links" aria-label="Footer">
+          <a href="#top">Back to top</a>
+          <a href="#how">How it works</a>
+          <a href="#shops">For shops</a>
+        </nav>
+        <div class="foot-osm">Street maps © OpenStreetMap contributors</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var root = document.documentElement, btn = document.getElementById('theme-toggle');
+      if (!btn) return;
+      btn.addEventListener('click', function () {
+        var t = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', t);
+        btn.setAttribute('aria-label', t === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+        try { localStorage.setItem('nz.theme', t); } catch (e) {}
+      });
+    })();
+  </script>
+</body>
+</html>

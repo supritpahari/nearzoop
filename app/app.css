@@ -457,6 +457,48 @@ Button.-primary {
   color: #1C1B19;
 }
 
+/* ------------- choose login (the door between onboarding + signin) --------- */
+/* drawn storefront on the regret pink dashes: striped awning, cream facade,
+ * amber window + rupee badge, ink door — everything in the app's palette */
+.cz-awning {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 9;
+}
+
+.cz-facade {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 3;
+  border-radius: 14;
+}
+
+.cz-window {
+  background-color: #F2A81D;
+  border-color: #1C1B19;
+  border-width: 2;
+  border-radius: 8;
+}
+
+.cz-badge {
+  background-color: #F2A81D;
+  border-color: #1C1B19;
+  border-width: 2;
+  border-radius: 13;
+}
+
+.cz-door {
+  background-color: #1C1B19;
+  border-radius: 4;
+}
+
+.cz-rupee {
+  font-family: 'Inter-Black', 'Inter', sans-serif;
+  font-size: 13;
+  color: #1C1B19;
+}
+
 /* NearZoop sign in / sign up */
 .si-back-ring {
   background-color: #FFFDF6;
@@ -706,13 +748,13 @@ Button.-primary {
 .ho-handle {
   background-color: #D8CEC0;
   border-radius: 999;
-  width: 68;
+  width: 37;
   height: 4.6;
 }
 
 .ho-h1 {
   font-family: 'Inter-Black', 'Inter', sans-serif;
-  font-size: 22.5;
+  font-size: 24;
   line-height: 1.1;
   color: #1C1B19;
 }
@@ -789,8 +831,20 @@ Button.-primary {
   border-radius: 16;
 }
 
+.ho-cardshadow {
+  background-color: #1C1B19;
+  border-radius: 16;
+}
+
 .ho-tile {
-  border-radius: 12;
+  border-color: #1C1B19;
+  border-width: 2;
+  border-radius: 9;
+}
+
+.ho-tileshadow {
+  background-color: #1C1B19;
+  border-radius: 9;
 }
 
 .ho-tile-text {
@@ -851,6 +905,52 @@ Button.-primary {
   font-family: 'Inter-Regular', 'Inter', sans-serif;
   font-size: 10.5;
   color: #9A9288;
+}
+
+/* category chips over the map's top edge */
+.ho-chiprow {
+  height: 44;
+}
+
+.ho-chipc {
+  background-color: #FFFDF6;
+  border-color: #1C1B19;
+  border-width: 2;
+  border-radius: 999;
+  padding: 6.5 14 7.5 14;
+}
+
+.ho-chipc-on {
+  background-color: #1C1B19;
+  border-color: #1C1B19;
+  border-width: 2;
+  border-radius: 999;
+  padding: 6.5 14 7.5 14;
+}
+
+.ho-chipT {
+  font-family: 'Inter-Bold', 'Inter', sans-serif;
+  font-size: 12.5;
+  color: #1C1B19;
+  white-space: nowrap;
+}
+
+.ho-chipT-on {
+  font-family: 'Inter-ExtraBold', 'Inter', sans-serif;
+  font-size: 12.5;
+  color: #FFFDF6;
+  white-space: nowrap;
+}
+
+.ho-chipshadow {
+  background-color: #1C1B19;
+  border-radius: 999;
+}
+
+/* active nearby tab: filled amber pill behind the icon (mock) */
+.ho-tabpill {
+  background-color: #F2A81D;
+  border-radius: 18;
 }
 
 

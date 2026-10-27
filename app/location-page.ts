@@ -15,7 +15,7 @@ import {
   isAndroid,
 } from '@nativescript/core'
 import * as geolocation from '@nativescript/geolocation'
-import { encodeSpec, MapBubble, MapSpec, mountMap, pushSpec } from './map-src'
+import { encodeSpec, MapSpec, mountMap, pushSpec } from './map-src'
 import { onLinkTouch, onStickerTouch } from './press-feel'
 import { errText, firebaseAuth, firebaseDb, saveUserArea } from './firebase'
 import { gpsProviderOn, lastKnownFix } from './locate'
@@ -140,11 +140,14 @@ async function acquireFix(timeoutMs: number): Promise<Fix | null> {
 /* Layered: a live fused wait first (cold-GPS first fixes need patience, so
  * the budget is generous); when even that comes up empty, the engine's
  * cached estimate lands instantly — no dialogs, no satellite wait. A stale
- * cache still beats zero: nothing saves before the confirm dialog. */
-async function acquireFixLayered(timeoutMs: number): Promise<Fix | null> {
+ * cache still beats zero: nothing saves before the confirm dialog, and a
+ * stale result is labeled as such everywhere it surfaces. */
+type Fixed = { lat: number; lng: number; accuracyM: number; stale: boolean; fixMs?: number }
+
+async function acquireFixLayered(timeoutMs: number): Promise<Fixed | null> {
   const fresh = await acquireFix(timeoutMs)
   if (fresh) {
-    return fresh
+    return { lat: fresh.lat, lng: fresh.lng, accuracyM: fresh.accuracyM, stale: false }
   }
   const cached = await lastKnownFix()
   if (cached) {
@@ -154,7 +157,13 @@ async function acquireFixLayered(timeoutMs: number): Promise<Fix | null> {
       cached.lng.toFixed(5),
       '±' + Math.round(cached.accuracyM) + 'm'
     )
-    return cached
+    return {
+      lat: cached.lat,
+      lng: cached.lng,
+      accuracyM: cached.accuracyM,
+      stale: true,
+      fixMs: cached.timeMs || 0,
+    }
   }
   console.log('[NZ][geo] cache layer empty — no fix available this attempt')
   return null
@@ -167,15 +176,46 @@ function fixFailText(): string {
     : 'GPS is off on this device. Turn it on, then Retry — or Search your locality below.'
 }
 
+function ageWords(fixMs: number): string {
+  const s = Math.max(1, Math.round((Date.now() - fixMs) / 1000))
+  if (s < 90) {
+    return 'a minute ago'
+  }
+  const m = Math.round(s / 60)
+  if (m < 90) {
+    return m + ' min ago'
+  }
+  const h = Math.round(m / 60)
+  if (h < 48) {
+    return h + ' h ago'
+  }
+  return Math.round(h / 24) + ' days ago'
+}
+
+/* a cache-sourced spot is labeled, never passed off as "where you are" */
+function staleText(fixMs: number): string {
+  return (
+    'That spot is your last known location' + (fixMs ? ' from ' + ageWords(fixMs) : '') +
+    '. Step outside and Retry for a live fix, or Search a locality below.'
+  )
+}
+
+/* remembers the last LIVE fix on this page visit: the CTA instant-confirm
+ * path only trusts places the device actually just proved (a cached spot
+ * centered seconds ago is not proof of "here") */
+let entryFreshMs = 0
+
 /* show a fix on the map WITHOUT saving it: center + naming live-render only */
-function centerArea(lat: number, lng: number, accuracyM: number) {
+function centerArea(lat: number, lng: number, accuracyM: number, stale = false, fixMs = 0) {
+  entryFreshMs = stale ? 0 : Date.now()
+  const fixTime = stale ? fixMs : Date.now()
   areaRef = {
     lat: lat,
     lng: lng,
     radiusKm: km,
     accuracyM: accuracyM,
     locality: areaRef ? areaRef.locality : undefined,
-    setTimeMs: Date.now(),
+    setTimeMs: fixTime,
   }
   render()
   nameLocality(areaRef).then((name) => {
@@ -213,11 +253,11 @@ async function autoLocate() {
     showBanner('Location is off. Turn it on, then tap Use my current location.')
     return
   }
-  const fix = await acquireFixLayered(12000)
+  const got = await acquireFixLayered(12000)
   if (!pageRef) {
     return
   }
-  if (!fix) {
+  if (!got) {
     showBanner(
       gpsProviderOn()
         ? "Couldn't find you just now — a first GPS fix can take a minute. Use the button below, or Search your locality."
@@ -227,11 +267,15 @@ async function autoLocate() {
   }
   console.log(
     '[NZ][geo] entry fix',
-    fix.lat.toFixed(5),
-    fix.lng.toFixed(5),
-    '±' + Math.round(fix.accuracyM) + 'm'
+    got.lat.toFixed(5),
+    got.lng.toFixed(5),
+    '±' + Math.round(got.accuracyM) + 'm',
+    got.stale ? '(cached)' : '(live)'
   )
-  centerArea(fix.lat, fix.lng, fix.accuracyM)
+  centerArea(got.lat, got.lng, got.accuracyM, got.stale, got.fixMs || 0)
+  if (got.stale) {
+    showBanner(staleText(got.fixMs || 0))
+  }
 }
 
 /* Real flow for the primary CTA: fix, center the map, then ASK with the
@@ -239,38 +283,57 @@ async function autoLocate() {
  * the secondary hands the decision to the free locality search screen. */
 let useBusy = false
 
-export async function onUseLocation(args: EventData) {
-  const page = (<View>args.object).page
-  pageRef = page
-  if (useBusy) {
+/* the Geocoder stalls for minutes on this ROM unbounded — the ask must
+ * never wait on it longer than a small budget */
+function nameBudget(p: Promise<string>, ms: number): Promise<string> {
+  return new Promise<string>((resolve) => {
+    let done = false
+    const t = setTimeout(() => {
+      if (!done) {
+        done = true
+        resolve('')
+      }
+    }, ms)
+    p.then((n) => {
+      clearTimeout(t)
+      if (!done) {
+        done = true
+        resolve(n)
+      }
+    }).catch(() => {
+      clearTimeout(t)
+      if (!done) {
+        done = true
+        resolve('')
+      }
+    })
+  })
+}
+
+/* the ask itself: budgeted naming, then the sticker confirm card. A stale
+ * spot gets a different body — the user must know it isn't a live reading */
+async function askRight(page: Page, stale = false, fixMs = 0) {
+  const area = areaRef
+  if (!area || pageRef !== page) {
     return
   }
-  useBusy = true
-  if (!(await serviceReady())) {
-    useBusy = false
-    return // serviceReady banners its own honest wording
-  }
-  const fix = await acquireFixLayered(15000)
-  if (!pageRef) {
-    useBusy = false
+  const name = String((await nameBudget(nameLocality(area), 2500)) || '')
+  if (pageRef !== page) {
     return
   }
-  if (!fix) {
-    showBanner(fixFailText())
-    useBusy = false
-    return
-  }
-  centerArea(fix.lat, fix.lng, fix.accuracyM)
-  const name = areaRef ? String((await nameLocality(areaRef)) || '') : ''
-  useBusy = false // the dialog's scrim owns the screen from here
-  const accM = Math.round(fix.accuracyM)
-  openDialog(page, {
-    title: 'Is this right?',
-    body:
-      'We found you near ' +
+  const accM = area.accuracyM ? Math.round(Number(area.accuracyM)) : 0
+  const body = stale
+    ? 'Only a cached position could be read' + (fixMs ? ' (from ' + ageWords(fixMs) + ')' : '') +
+      ', near ' + (name || 'your area') + (accM > 50 ? ' — about ' + accM + ' m accuracy.' : '.') +
+      ' Retry outside for a live fix, or Search a locality.'
+    : 'We found you near ' +
       (name || 'your current position') +
       (accM > 50 ? ' — about ' + accM + ' m accuracy.' : '.') +
-      ' Offers come from this area.',
+      ' Offers come from this area.'
+  openDialog(page, {
+    title: stale ? 'Is this spot right?' : 'Is this right?',
+    body: body,
+    bodyEmph: name || 'your current position',
     primaryLabel: 'Yes — use this',
     onPrimary: () => {
       commitArea(page, name || undefined)
@@ -282,6 +345,41 @@ export async function onUseLocation(args: EventData) {
   })
 }
 
+export async function onUseLocation(args: EventData) {
+  const page = (<View>args.object).page
+  pageRef = page
+  console.log('[NZ][locate-pg] use tapped')
+  if (useBusy) {
+    return
+  }
+  // the entry locate just proved a LIVE spot on this screen — an instant
+  // confirm beats re-waiting for a fix the device already handed us (a
+  // cached-centered map does not count: that spot can be days old)
+  if (areaRef && entryFreshMs && Date.now() - entryFreshMs < 90000) {
+    console.log('[NZ][locate-pg] reusing fresh entry fix -> asking')
+    await askRight(page)
+    return
+  }
+  useBusy = true
+  if (!(await serviceReady())) {
+    useBusy = false
+    return // serviceReady banners its own honest wording
+  }
+  const got = await acquireFixLayered(15000)
+  if (!pageRef) {
+    useBusy = false
+    return
+  }
+  if (!got) {
+    showBanner(fixFailText())
+    useBusy = false
+    return
+  }
+  centerArea(got.lat, got.lng, got.accuracyM, got.stale, got.fixMs || 0)
+  useBusy = false // the dialog's scrim owns the screen from here
+  await askRight(page, got.stale, got.fixMs || 0)
+}
+
 // the banner is honest data: Retry really tries again
 export function onRetry(args: EventData) {
   pageRef = (<View>args.object).page
@@ -290,10 +388,14 @@ export function onRetry(args: EventData) {
     if (!ready) {
       return // serviceReady re-flagged the banner itself
     }
-    acquireFixLayered(15000).then((fix) => {
-      if (fix) {
-        hideBanner()
-        centerArea(fix.lat, fix.lng, fix.accuracyM)
+    acquireFixLayered(15000).then((got) => {
+      if (got) {
+        centerArea(got.lat, got.lng, got.accuracyM, got.stale, got.fixMs || 0)
+        if (got.stale) {
+          showBanner(staleText(got.fixMs || 0))
+        } else {
+          hideBanner()
+        }
       } else {
         showBanner(fixFailText())
       }
@@ -349,14 +451,17 @@ function persistArea(a: Area) {
 /* --------------------------------- offers --------------------------------- */
 
 // Real bubbles come from the shops collection; when it's still empty and the
-// user is signed in we seed the mock's six stickers into Firestore once, keyed
+// user is signed in we seed the demo offer docs into Firestore once, keyed
 // around the real fix (or the Kolkata default), so everything on screen is
-// data you can edit from the console.
+// data you can edit from the console. A corpus that predates the offer fields
+// (bare lat/lng/text docs) is upgraded: cleared and reseeded with full docs.
 async function loadOffers() {
   try {
     const db = await firebaseDb()
-    const snap = await db.collection('shops').limit(50).get()
+    const snap = await db.collection('shops').limit(120).get()
     const out: Shop[] = []
+    let anyFull = false
+    const legacyIds: string[] = []
     ;(<any>snap).forEach((d: any) => {
       const v = <any>d.data() || {}
       const text = String(v.text || '').trim()
@@ -368,11 +473,23 @@ async function loadOffers() {
           text: text,
           fontSize: isFinite(v.fontSize) ? Number(v.fontSize) : 0,
         })
+        if (v.title) {
+          anyFull = true
+        } else {
+          legacyIds.push(String(d.id || ''))
+        }
       }
     })
     if (!out.length) {
-      console.log('[NZ][offers] shops collection empty — seeding demo stickers')
-      seedShopsOnce()
+      console.log('[NZ][offers] shops collection empty — seeding offer docs')
+      seedShopsOnce(false, [])
+      return
+    }
+    if (!anyFull) {
+      console.log(
+        '[NZ][offers] legacy-only corpus — reseeding', legacyIds.length, 'docs as full offers'
+      )
+      seedShopsOnce(true, legacyIds)
       return
     }
     shops = out
@@ -383,8 +500,9 @@ async function loadOffers() {
   }
 }
 
-// one-shot guarded: never loops back into itself
-function seedShopsOnce() {
+// one-shot guarded: never loops back into itself. `legacy` mode deletes bare
+// pre-offer demo docs first so the map keeps one clean badge per sticker.
+function seedShopsOnce(legacy: boolean, legacyIds: string[]) {
   if (seedAttempted) {
     return
   }
@@ -392,39 +510,44 @@ function seedShopsOnce() {
   firebaseAuth()
     .then((auth) => {
       if (!auth.currentUser) {
-        console.log('[NZ][offers] guest session — demo stickers stay, seeds skipped')
+        console.log('[NZ][offers] guest session — seeds skipped')
         return
       }
-      return firebaseDb().then((db) =>
-        db
-          .collection('shops')
-          .limit(1)
-          .get()
-          .then((snap) => {
-            let count = 0
-            ;(<any>snap).forEach(() => {
-              count++
-            })
-            if (count > 0) {
-              // raced by another device: data arrived anyway
-              return loadOffers()
-            }
-            const c = areaRef || { lat: DEFAULT_CENTER.lat, lng: DEFAULT_CENTER.lng }
-            const slat = (c.lat * Math.PI) / 180
-            const writes = DEMO_OFFSETS.map((off) =>
-              db.collection('shops').add({
-                lat: c.lat - off[1] / DP_PER_KM / 111.32,
-                lng: c.lng + off[0] / DP_PER_KM / (111.32 * Math.cos(slat)),
-                text: off[2],
-                fontSize: off[3],
-              })
+      return firebaseDb().then((db) => {
+        const clear = legacy
+          ? Promise.all(
+              legacyIds.map((id) =>
+                db
+                  .collection('shops')
+                  .doc(id)
+                  .delete()
+                  .catch(() => undefined)
+              )
             )
-            return Promise.all(writes).then(() => {
-              console.log('[NZ][offers] seeded 6 demo shops into Firestore')
-              loadOffers()
-            })
+          : Promise.resolve()
+        const c = areaRef || { lat: DEFAULT_CENTER.lat, lng: DEFAULT_CENTER.lng }
+        const slat = (c.lat * Math.PI) / 180
+        const writes = DEMO_OFFSETS.map((off, i) => {
+          const m = DEMO_META[i]
+          return db.collection('shops').add({
+            lat: c.lat - off[1] / DP_PER_KM / 111.32,
+            lng: c.lng + off[0] / DP_PER_KM / (111.32 * Math.cos(slat)),
+            text: off[2],
+            fontSize: off[3],
+            title: m[0],
+            shop: m[1],
+            color: m[2],
+            category: m[3],
+            endsAtMs: endsIn(m[4][0], m[4][1], m[4][2]),
           })
-      )
+        })
+        return clear
+          .then(() => Promise.all(writes))
+          .then(() => {
+            console.log('[NZ][offers] seeded 6 offer docs at the current area')
+            loadOffers()
+          })
+      })
     })
     .catch((err) => console.log('[NZ][offers] seed blocked:', errText(err)))
 }
@@ -437,6 +560,28 @@ const DEMO_OFFSETS: [number, number, string, number][] = [
   [65, 40, '\u20B9500', 16],
   [-120, 60, 'FREE', 14],
 ]
+
+// parallel detail (index-aligned with DEMO_OFFSETS): title, shop, tile colour,
+// category for the home chip filter, and an end time [dayOffset, hour, minute]
+// resolved to absolute ms at seed time.
+const DEMO_META: [string, string, string, string, [number, number, number]][] = [
+  ['Puja collection — flat 20% off', 'Gariahat Saree Ghar', 'amber', 'Fashion', [3, 21, 30]],
+  ['Mishti hamper pick of the week', 'Shri Mistanna Bhandar', 'red', 'Mishti', [2, 20, 0]],
+  ['Buy 1 plate, get 1 free', 'Phuchka Phactory', 'red', 'Food', [0, 21, 0]],
+  ['10 rosgogolla for the price of 8', 'Nolen Gur Sweets', 'pink', 'Mishti', [4, 21, 30]],
+  ['Monthly grocery kit, flat 30% off', 'Hatiara Bazaar', 'amber', 'Groceries', [5, 22, 0]],
+  ['Phone screen service, flat price', 'Gadget Sewa', 'red', 'Electronics', [1, 20, 30]],
+]
+
+function endsIn(days: number, hour: number, minute: number): number {
+  const d = new Date()
+  d.setDate(d.getDate() + days)
+  d.setHours(hour, minute, 0, 0)
+  if (d.getTime() <= Date.now()) {
+    d.setDate(d.getDate() + 1) // slot already passed today: same slot tomorrow
+  }
+  return d.getTime()
+}
 
 /* --------------------------------- layout --------------------------------- */
 
@@ -595,38 +740,20 @@ function centerForProjection() {
 }
 
 /* The map webview owns all geometry. Around a real fix (or the Kolkata
- * default) it draws the dashed radius ring, the blue dot and one sticker
- * bubble per shop: shops when Firestore has them, the demo stickers as a
- * geo-anchored fallback for guests on a still-empty collection. */
+ * default) it draws the dashed radius ring and the blue dot — no offer
+ * packets on this page: it's for choosing an area, not browsing offers. */
 
 function buildMapSpec(): MapSpec {
   const c = centerForProjection()
-  const src: MapBubble[] = shops.length
-    ? shops.map((s) => ({ lat: s.lat, lng: s.lng, text: s.text, fontSize: s.fontSize }))
-    : demoBubbleList()
   return {
     lat: c.lat,
     lng: c.lng,
     radiusKm: km,
+    // the slider drives the framing radius 1:1, so the ring stays framed
+    // at any setting; the ring layer still paints the true radius
+    fitKm: km,
     padB: 0.09,
-    bubbles: src.map((b) => ({
-      lat: b.lat,
-      lng: b.lng,
-      text: b.text,
-      fontSize: b.fontSize || (b.text.length > 5 ? 13.5 : 16),
-    })),
   }
-}
-
-function demoBubbleList(): MapBubble[] {
-  const c = centerForProjection()
-  const cos = Math.cos((c.lat * Math.PI) / 180)
-  return DEMO_OFFSETS.map((off) => ({
-    lat: c.lat - off[1] / DP_PER_KM / 111.32,
-    lng: c.lng + off[0] / DP_PER_KM / (111.32 * cos),
-    text: off[2],
-    fontSize: off[3],
-  }))
 }
 
 function mapWeb(): WebView | null {
@@ -648,6 +775,7 @@ function primeMap(force: boolean) {
     mapMounted = true
   }
   const json = encodeSpec(buildMapSpec())
+  console.log('[NZ][locate] prime km=' + km.toFixed(2) + (mapMounted ? '' : ' (unmounted, skip)'))
   if (!force && json === mapKey) {
     return
   }

@@ -33,8 +33,8 @@ const ACC_HIGH = 3
 declare const android: any
 declare const com: any
 
-/* one fix attempt result, plugin-shaped */
-export type RawFix = { lat: number; lng: number; accuracyM: number }
+/* one fix attempt result, plugin-shaped (timeMs = engine fix age, 0 for live) */
+export type RawFix = { lat: number; lng: number; accuracyM: number; timeMs?: number }
 
 /* is the GPS side of location services actually enabled (network-only mode
  * can look identical while every high-accuracy wait is doomed) */
@@ -89,7 +89,8 @@ export function lastKnownFix(): Promise<RawFix | null> {
               return
             }
             const acc = loc.getAccuracy ? Number(loc.getAccuracy()) : 0
-            done({ lat: lat, lng: lng, accuracyM: isFinite(acc) ? acc : 0 })
+            const t = loc.getTime ? Number(loc.getTime()) : 0
+            done({ lat: lat, lng: lng, accuracyM: isFinite(acc) ? acc : 0, timeMs: isFinite(t) ? t : 0 })
           } catch (e) {
             console.log('[NZ][geo] lastKnown parse:', errText(e))
             done(null)

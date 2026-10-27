@@ -2,7 +2,9 @@
  * Locality search — Nominatim (OpenStreetMap) backed, keyless and free
  * forever (the same OSM family the app's tiles already ride on): one
  * request per 800 ms of settled typing, India-fenced, most recent answer
- * wins. Selecting a result saves it as the current area and opens home.
+ * wins. Every choice opens the shared sticker dialog; an agreement is what
+ * writes the area to the device store (and the signed-in profile) and
+ * releases to home. Nothing saves on a cancel or a back-out.
  */
 import {
   EventData,
@@ -18,8 +20,9 @@ import {
 import { onLinkTouch, onStickerTouch, defuseWindowAutofill } from './press-feel'
 import { errText } from './firebase'
 import { LocatedArea, persistFix, radiusKmFor } from './locate'
+import { onDlgScrimTap, openDialog } from './nz-dialog'
 
-export { onLinkTouch, onStickerTouch }
+export { onLinkTouch, onStickerTouch, onDlgScrimTap }
 
 type Row = {
   lat: number
@@ -31,6 +34,9 @@ type Row = {
 let pageRef: Page | null = null
 let debounce: ReturnType<typeof setTimeout> | null = null
 let seq = 0
+// single press on this ROM can dispatch twice: the second dispatch would
+// instantly confirm whatever dialog the first one opened
+let lastRowMs = 0
 
 const MIN_CHARS = 3
 const DEBOUNCE_MS = 800
@@ -161,10 +167,9 @@ function uniqueRows(arr: any[]): Row[] {
         a.town || a.village || head
     ).trim()
     const line = String(v.display_name || locality)
-    if (!locality || !line || seen.has(line)) {
+    if (!locality || !line) {
       return
     }
-    seen.add(line)
     const parts: string[] = []
     ;[a.city || a.town || a.village || a.county, a.state].forEach((p: any) => {
       const s = p ? String(p).trim() : ''
@@ -184,11 +189,19 @@ function uniqueRows(arr: any[]): Row[] {
           }
         })
     }
+    const detail = parts.join(' · ') || 'Exact pin from the map search'
+    // one visible row per place+context: Nominatim returns several feature
+    // types per locality (node/way/transit), which read as duplicate cards
+    const key = (locality + '|' + detail).toLowerCase()
+    if (seen.has(key)) {
+      return
+    }
+    seen.add(key)
     out.push({
       lat: lat,
       lng: lng,
       locality: locality,
-      detail: parts.join(' · ') || 'Exact pin from the map search',
+      detail: detail,
     })
   })
   return out.slice(0, 8)
@@ -283,25 +296,44 @@ function rowView(r: Row, i: number): View {
   return row
 }
 
+/* the confirm conversation: nothing writes until the primary says so */
 function selectRow(row: View, r: Row) {
   const page = pageRef
   if (!page) {
     return
   }
+  const now = Date.now()
+  if (now - lastRowMs < 700) {
+    return // ghost second dispatch from the same physical press
+  }
+  lastRowMs = now
   row
     .animate({ translate: { x: 2, y: 2 }, duration: 70 })
     .then(() => row.animate({ translate: { x: 0, y: 0 }, duration: 110 }))
     .catch(() => undefined)
-  const area: LocatedArea = {
-    lat: r.lat,
-    lng: r.lng,
-    radiusKm: radiusKmFor(),
-    accuracyM: 0,
-    locality: r.locality,
-    setTimeMs: Date.now(),
-  }
-  persistFix(area)
-  toMain(page)
+  const short = r.locality || 'this place'
+  openDialog(page, {
+    title: 'Is ' + short + ' right?',
+    body:
+      'Offers will come from ' +
+      (r.detail ? r.detail : 'this exact pin') +
+      '. Your radius slider carries over.',
+    bodyEmph: r.detail ? r.detail : 'this exact pin',
+    primaryLabel: 'Yes — use this',
+    onPrimary: () => {
+      const area: LocatedArea = {
+        lat: r.lat,
+        lng: r.lng,
+        radiusKm: radiusKmFor(),
+        accuracyM: 0,
+        locality: r.locality,
+        setTimeMs: Date.now(),
+      }
+      persistFix(area)
+      toMain(page)
+    },
+    secondaryLabel: 'Back to search',
+  })
 }
 
 function toMain(page: Page) {

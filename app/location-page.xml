@@ -112,6 +112,7 @@
       <GridLayout id="nzDlgScrim" class="bs-scrim" opacity="0" tap="onDlgScrimTap" />
       <GridLayout
           id="nzDlgBox"
+          rows="auto"
           verticalAlignment="top" horizontalAlignment="stretch"
           marginTop="168" marginLeft="27" marginRight="27">
         <GridLayout
@@ -119,7 +120,11 @@
             class="dlg-shadow"
             horizontalAlignment="stretch"
             marginTop="4" marginRight="4" />
-        <GridLayout id="nzDlgCard" class="dlg-card" horizontalAlignment="stretch" />
+        <GridLayout
+            id="nzDlgCard"
+            class="dlg-card"
+            columns="*"
+            horizontalAlignment="stretch" />
       </GridLayout>
     </GridLayout>
   </GridLayout>

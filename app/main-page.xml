@@ -14,10 +14,10 @@
       <WebView id="mapWeb" />
 
       <!-- top action stickers -->
-      <GridLayout rows="auto" columns="auto, auto, *, auto" marginLeft="16" marginRight="16"
+      <GridLayout rows="auto" columns="*, auto, auto" marginLeft="16" marginRight="16"
                   marginTop="13" verticalAlignment="top" zIndex="5">
         <GridLayout id="locSticker" col="0" rows="auto" columns="auto"
-                    verticalAlignment="top"
+                    horizontalAlignment="stretch"
                     tap="onStickerTap" touch="onStickerTouch">
           <StackLayout id="locStickerShadow" row="0" class="ho-topbar-shadow" />
           <GridLayout id="locStickerCard" row="0" class="ho-topbar" rows="auto"
@@ -44,7 +44,7 @@
           </GridLayout>
         </GridLayout>
 
-        <GridLayout id="btnBell" col="3" width="42" height="42"
+        <GridLayout id="btnBell" col="2" width="42" height="42" marginLeft="9"
                     tap="onBellTap" touch="onStickerTouch">
           <StackLayout id="btnBellShadow" class="ho-topbar-shadow" />
           <GridLayout id="btnBellCard" class="ho-topbar">
@@ -57,8 +57,59 @@
         </GridLayout>
       </GridLayout>
 
+      <!-- category chips float over the map top edge (mock row) -->
+      <ScrollView orientation="horizontal" verticalAlignment="top" zIndex="6"
+                  class="ho-chiprow" scrollBarIndicatorVisible="false"
+                  marginTop="68">
+        <StackLayout orientation="horizontal" paddingLeft="16">
+          <GridLayout id="chip0" tap="onChipTap" touch="onStickerTouch"
+                      marginRight="8">
+            <StackLayout id="chipSh0" class="ho-chipshadow" />
+            <GridLayout id="chipC0" class="ho-chipc-on">
+              <Label id="chipT0" text="All" class="ho-chipT-on" />
+            </GridLayout>
+          </GridLayout>
+          <GridLayout id="chip1" tap="onChipTap" touch="onStickerTouch"
+                      marginRight="8">
+            <StackLayout id="chipSh1" class="ho-chipshadow" />
+            <GridLayout id="chipC1" class="ho-chipc">
+              <Label id="chipT1" text="Food" class="ho-chipT" />
+            </GridLayout>
+          </GridLayout>
+          <GridLayout id="chip2" tap="onChipTap" touch="onStickerTouch"
+                      marginRight="8">
+            <StackLayout id="chipSh2" class="ho-chipshadow" />
+            <GridLayout id="chipC2" class="ho-chipc">
+              <Label id="chipT2" text="Mishti" class="ho-chipT" />
+            </GridLayout>
+          </GridLayout>
+          <GridLayout id="chip3" tap="onChipTap" touch="onStickerTouch"
+                      marginRight="8">
+            <StackLayout id="chipSh3" class="ho-chipshadow" />
+            <GridLayout id="chipC3" class="ho-chipc">
+              <Label id="chipT3" text="Fashion" class="ho-chipT" />
+            </GridLayout>
+          </GridLayout>
+          <GridLayout id="chip4" tap="onChipTap" touch="onStickerTouch"
+                      marginRight="8">
+            <StackLayout id="chipSh4" class="ho-chipshadow" />
+            <GridLayout id="chipC4" class="ho-chipc">
+              <Label id="chipT4" text="Groceries" class="ho-chipT" />
+            </GridLayout>
+          </GridLayout>
+          <GridLayout id="chip5" tap="onChipTap" touch="onStickerTouch"
+                      marginRight="8">
+            <StackLayout id="chipSh5" class="ho-chipshadow" />
+            <GridLayout id="chipC5" class="ho-chipc">
+              <Label id="chipT5" text="Electronics" class="ho-chipT" />
+            </GridLayout>
+          </GridLayout>
+        </StackLayout>
+      </ScrollView>
+
       <!-- round map controls (right edge of the map, pinned by TS) -->
       <GridLayout id="btnLocate" width="46" height="46" marginRight="18"
+                  horizontalAlignment="right"
                   verticalAlignment="top" zIndex="5"
                   tap="onLocateTap" touch="onStickerTouch">
         <GridLayout id="btnLocateCard" class="ho-round">
@@ -68,6 +119,7 @@
         </GridLayout>
       </GridLayout>
       <GridLayout id="btnLayers" width="40" height="40" marginRight="20"
+                  horizontalAlignment="right"
                   verticalAlignment="top" zIndex="5"
                   tap="onLayersTap" touch="onStickerTouch">
         <GridLayout id="btnLayersCard" class="ho-round-sm">
@@ -112,9 +164,9 @@
                 id="navBar">
       <StackLayout col="0" id="tab0" tap="onTabTap" touch="onLinkTouch"
                    horizontalAlignment="center" verticalAlignment="center">
-        <GridLayout id="tabPill0" width="46" height="27"
+        <GridLayout id="tabPill0" width="68" height="36" class="ho-tabpill"
                     horizontalAlignment="center" verticalAlignment="top">
-          <Image id="tabIco0" src="res://ic_pin_amb" width="20" height="20"
+          <Image id="tabIco0" src="res://ic_pin_ink" width="22" height="22"
                  horizontalAlignment="center" verticalAlignment="center"
                  stretch="aspectFit" />
         </GridLayout>

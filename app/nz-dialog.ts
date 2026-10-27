@@ -12,15 +12,20 @@ import {
   AndroidActivityBackPressedEventData,
   Application,
   Enums,
+  FormattedString,
   GridLayout,
   Label,
   Page,
+  Span,
+  StackLayout,
   View,
 } from '@nativescript/core'
 
 export type DialogSpec = {
   title: string
   body: string
+  /* substring of body painted bold — the area/locality name */
+  bodyEmph?: string
   primaryLabel: string
   onPrimary?: () => void
   secondaryLabel?: string
@@ -31,6 +36,7 @@ let hostPage: Page | null = null
 let spec: DialogSpec | null = null
 let open = false
 let backHooked = false
+let openedMs = 0
 
 const SCRIM_MAX = 0.45
 
@@ -50,6 +56,7 @@ export function openDialog(page: Page, s: DialogSpec): void {
   hostPage = page
   spec = s
   open = true
+  openedMs = Date.now()
   buildCard(page, s)
   layer.visibility = 'visible'
   scrim.opacity = 0
@@ -129,6 +136,14 @@ function buildCard(page: Page, s: DialogSpec): void {
   })
   kids.forEach((k) => card.removeChild(k))
 
+  // this core drops unindexed GridLayout children into the same cell (the
+  // chip bug all over again) — the conversation stacks in one vertical pane
+  const pane = new StackLayout()
+  pane.col = 0
+  pane.row = 0
+  // air below the last button — the card currently hugs the locality button
+  pane.marginBottom = 16
+
   const title = new Label()
   title.className = 'dlg-title'
   title.text = s.title
@@ -136,25 +151,50 @@ function buildCard(page: Page, s: DialogSpec): void {
   title.marginTop = 26
   title.marginLeft = 24
   title.marginRight = 24
-  card.addChild(title)
+  pane.addChild(title)
 
   const body = new Label()
   body.className = 'dlg-body'
-  body.text = s.body
   body.textWrap = true
   body.marginTop = 12
   body.marginLeft = 24
   body.marginRight = 24
-  card.addChild(body)
+  // the area name reads bold inside the sentence when the caller names it
+  const emph = s.bodyEmph || ''
+  const at = emph ? s.body.indexOf(emph) : -1
+  if (at >= 0) {
+    const fs = new FormattedString()
+    if (at > 0) {
+      const pre = new Span()
+      pre.text = s.body.slice(0, at)
+      fs.spans.push(pre)
+    }
+    const bold = new Span()
+    bold.fontWeight = 'bold'
+    bold.text = emph
+    fs.spans.push(bold)
+    const tail = s.body.slice(at + emph.length)
+    if (tail.length) {
+      const post = new Span()
+      post.text = tail
+      fs.spans.push(post)
+    }
+    body.formattedText = fs
+  } else {
+    body.text = s.body
+  }
+  pane.addChild(body)
 
-  card.addChild(
+  pane.addChild(
     buttonRow(s.primaryLabel, 'ls-btn-primary', 'ls-btn-text-primary', s.onPrimary)
   )
   if (s.secondaryLabel) {
-    card.addChild(
+    pane.addChild(
       buttonRow(s.secondaryLabel, 'ls-btn-sec', 'ls-btn-text-secondary', s.onSecondary)
     )
   }
+
+  card.addChild(pane)
 }
 
 function buttonRow(
@@ -186,6 +226,11 @@ function buttonRow(
   box.addChild(shadow)
   box.addChild(btn)
   box.on('tap', <any>(() => {
+    // this ROM double-dispatches touch+tap for a single press; a ghost
+    // second tap within the opening window must not fire the action
+    if (Date.now() - openedMs < 300) {
+      return
+    }
     box
       .animate({ translate: { x: 2, y: 2 }, duration: 70 })
       .then(() => box.animate({ translate: { x: 0, y: 0 }, duration: 110 }))

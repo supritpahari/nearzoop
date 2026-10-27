@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>404 · NearZoop</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="/assets/img/logo.png">
+  <link rel="stylesheet" href="/assets/css/landing.css?v=2026-4">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('nz.theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light' && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) t = 'dark';
+      if (t) document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+  <main style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:26px">
+    <div style="background:var(--paper);border:2.4px solid var(--ink);border-radius:26px;box-shadow:7px 8px 0 var(--ink);padding:42px 44px;text-align:center;max-width:470px;transform:rotate(-1deg)">
+      <div style="font-family:var(--mono);font-weight:500;font-size:12px;letter-spacing:2.4px;color:var(--overline)">404 · OFF-MAP</div>
+      <h1 style="margin:14px 0 10px;font-weight:900;font-size:34px;line-height:1.05;letter-spacing:-.5px">This lane isn't on the map.</h1>
+      <p style="margin:0 0 26px;color:var(--gray-body);font-size:15px;line-height:1.5">The page you zooped for doesn't exist — hopping back home in a moment.</p>
+      <a class="btn btn-red btn-md" href="/">Take me to the map</a>
+    </div>
+  </main>
+  <script>setTimeout(function () { if (location.pathname !== '/') location.replace('/'); }, 2600);</script>
+</body>
+</html>

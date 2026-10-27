@@ -177,13 +177,13 @@ function applyChrome(page: Page) {
   }
 }
 
-// history stays live so the sign-in back sticker returns here
+// history stays live so the chooser's hardware back returns here
 function toSignin(page: Page) {
   try {
-    page.frame.navigate({ moduleName: 'signin-page' })
+    page.frame.navigate({ moduleName: 'choose-page' })
   } catch (e) {
     console.log(
-      '[NZ][ob] nav to signin failed:',
+      '[NZ][ob] nav to choose failed:',
       (e && (e.message || String(e))) || e
     )
   }
